@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Artem Akhmadeev](https://up.htmlacademy.ru/ecmascript/10/user/108519).
-* Наставник: `Неизвестно`.
+* Наставник: [Михаил Семиколенов](https://up.htmlacademy.ru/ecmascript/10/user/19706).
 
 ---
 
