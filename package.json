@@ -1,5 +1,5 @@
 {
-  "name": "Cinemaddict Vue",
+  "name": "Cinemaddict",
   "version": "1.0.0",
   "private": true,
   "description": "Личный проект «Киноман» от HTML Academy",
@@ -10,8 +10,11 @@
     "start": "webpack-dev-server --open"
   },
   "devDependencies": {
+    "eslint": "6.1.0",
+    "eslint-config-htmlacademy": "0.5.2",
     "webpack": "4.41.2",
-    "webpack-cli": "3.3.10"
+    "webpack-cli": "3.3.10",
+    "webpack-dev-server": "3.9.0"
   },
   "engines": {
     "node": "10"
