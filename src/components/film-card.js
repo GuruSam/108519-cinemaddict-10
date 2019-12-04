@@ -1,9 +1,9 @@
-import {formatTime} from "../mock/utils";
+import {createElement, formatTime} from "../utils";
 
-export const createFilmCardTemplate = (film) => {
+const createFilmCardTemplate = (film) => {
   const duration = formatTime(film.duration);
 
-  return `<article class="film-card" data-id="${film.id}">
+  return `<article class="film-card">
     <h3 class="film-card__title">${film.title}</h3>
     <p class="film-card__rating">${film.rating}</p>
     <p class="film-card__info">
@@ -21,3 +21,26 @@ export const createFilmCardTemplate = (film) => {
     </form>
   </article>`;
 };
+
+export default class FilmCard {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

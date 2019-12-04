@@ -1,11 +1,11 @@
-import {formatTime} from "../mock/utils";
+import {createElement, formatTime} from "../utils";
 
 const renderGenres = (genres) => {
   return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`)
     .join(`\n`);
 };
 
-export const createFilmDetailsTemplate = (film) => {
+const createFilmDetailsTemplate = (film) => {
   const duration = formatTime(film.duration);
 
   return `<section class="film-details">
@@ -176,3 +176,26 @@ export const createFilmDetailsTemplate = (film) => {
     </form>
   </section>`;
 };
+
+export default class FilmDetails {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmDetailsTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

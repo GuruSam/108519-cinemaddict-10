@@ -1,4 +1,4 @@
-import {getRandomNumber, getRandomArrayItem, getRandomBoolean} from './utils';
+import {getRandomNumber, getRandomArrayItem, getRandomBoolean} from '../utils';
 
 const MIN_YEAR = 1940;
 const MAX_YEAR = 2019;
@@ -37,9 +37,8 @@ const generateDescription = () => {
   return randomDescription.join(`. `);
 };
 
-const generateRandomFilm = (id) => {
+const generateRandomFilm = () => {
   return {
-    id,
     title: getRandomArrayItem(filmTitles),
     poster: getRandomArrayItem(filmPosters),
     director: `John Stone`,
