@@ -12,7 +12,7 @@ export default class FilmSection {
 
       <div class="films-list__container"></div>
     </section>
-  </section>`
+  </section>`;
   }
 
   getElement() {
