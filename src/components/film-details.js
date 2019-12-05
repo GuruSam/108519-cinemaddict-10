@@ -1,14 +1,21 @@
-import {formatTime} from "../mock/utils";
+import {createElement, formatTime} from "../utils";
 
-const renderGenres = (genres) => {
-  return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`)
-    .join(`\n`);
-};
+export default class FilmDetails {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
 
-export const createFilmDetailsTemplate = (film) => {
-  const duration = formatTime(film.duration);
+  renderGenres(genres) {
+    return genres.map((genre) => `<span class="film-details__genre">${genre}</span>`)
+      .join(`\n`);
+  }
 
-  return `<section class="film-details">
+  getTemplate() {
+    const film = this._film;
+    const duration = formatTime(film.duration);
+
+    return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
       <div class="form-details__top-container">
         <div class="film-details__close">
@@ -61,7 +68,7 @@ export const createFilmDetailsTemplate = (film) => {
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
                 <td class="film-details__cell">
-                  ${renderGenres(film.genres)}
+                  ${this.renderGenres(film.genres)}
               </tr>
             </table>
 
@@ -175,4 +182,17 @@ export const createFilmDetailsTemplate = (film) => {
       </div>
     </form>
   </section>`;
-};
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

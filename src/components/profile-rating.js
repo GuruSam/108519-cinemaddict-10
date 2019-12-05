@@ -1,36 +1,40 @@
-const ratings = [
-  {
-    title: `Novice`,
-    min: 0,
-    max: 9
-  },
-  {
-    title: `Fun`,
-    min: 10,
-    max: 19
-  },
-  {
-    title: `Movie Buff`,
-    min: 20,
-    max: 30
+import {createElement, userRatings} from "../utils";
+
+export default class ProfileRating {
+  constructor(moviesWatchedAmount) {
+    this._moviesWatched = moviesWatchedAmount;
+    this._element = null;
   }
-];
 
-const getUserRating = (moviesWatched) => {
-  let userRating;
+  getUserRating() {
+    let userRating;
 
-  for (const rate of ratings) {
-    if (moviesWatched >= rate.min && moviesWatched <= rate.max) {
-      userRating = rate.title;
-      break;
+    for (const rate of userRatings) {
+      if (this._moviesWatched >= rate.min && this._moviesWatched <= rate.max) {
+        userRating = rate.title;
+        break;
+      }
     }
+
+    return userRating;
   }
 
-  return userRating;
-};
-
-export const createProfileRatingTemplate = (movies) =>
-  `<section class="header__profile profile">
-    <p class="profile__rating">${getUserRating(movies)}</p>
+  getTemplate() {
+    return `<section class="header__profile profile">
+    <p class="profile__rating">${this.getUserRating()}</p>
     <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
   </section>`;
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
