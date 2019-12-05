@@ -1,41 +1,4 @@
-import {createElement} from "../utils";
-
-const ratings = [
-  {
-    title: `Novice`,
-    min: 0,
-    max: 9
-  },
-  {
-    title: `Fan`,
-    min: 10,
-    max: 19
-  },
-  {
-    title: `Movie Buff`,
-    min: 20,
-    max: 30
-  }
-];
-
-const getUserRating = (moviesWatched) => {
-  let userRating;
-
-  for (const rate of ratings) {
-    if (moviesWatched >= rate.min && moviesWatched <= rate.max) {
-      userRating = rate.title;
-      break;
-    }
-  }
-
-  return userRating;
-};
-
-const createProfileRatingTemplate = (movies) =>
-  `<section class="header__profile profile">
-    <p class="profile__rating">${getUserRating(movies)}</p>
-    <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-  </section>`;
+import {createElement, userRatings} from "../utils";
 
 export default class ProfileRating {
   constructor(moviesWatchedAmount) {
@@ -43,8 +6,24 @@ export default class ProfileRating {
     this._element = null;
   }
 
+  getUserRating() {
+    let userRating;
+
+    for (const rate of userRatings) {
+      if (this._moviesWatched >= rate.min && this._moviesWatched <= rate.max) {
+        userRating = rate.title;
+        break;
+      }
+    }
+
+    return userRating;
+  }
+
   getTemplate() {
-    return createProfileRatingTemplate(this._moviesWatched);
+    return `<section class="header__profile profile">
+    <p class="profile__rating">${this.getUserRating()}</p>
+    <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+  </section>`;
   }
 
   getElement() {
