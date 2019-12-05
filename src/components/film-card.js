@@ -1,9 +1,16 @@
 import {createElement, formatTime} from "../utils";
 
-const createFilmCardTemplate = (film) => {
-  const duration = formatTime(film.duration);
+export default class FilmCard {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
 
-  return `<article class="film-card">
+  getTemplate() {
+    const film = this._film;
+    const duration = formatTime(film.duration);
+
+    return `<article class="film-card">
     <h3 class="film-card__title">${film.title}</h3>
     <p class="film-card__rating">${film.rating}</p>
     <p class="film-card__info">
@@ -20,16 +27,6 @@ const createFilmCardTemplate = (film) => {
       <button class="film-card__controls-item button film-card__controls-item--favorite">Mark as favorite</button>
     </form>
   </article>`;
-};
-
-export default class FilmCard {
-  constructor(film) {
-    this._film = film;
-    this._element = null;
-  }
-
-  getTemplate() {
-    return createFilmCardTemplate(this._film);
   }
 
   getElement() {

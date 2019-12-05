@@ -3,6 +3,24 @@ export const RenderPosition = {
   BEFOREEND: `beforeend`
 };
 
+export const userRatings = [
+  {
+    title: `Novice`,
+    min: 0,
+    max: 9
+  },
+  {
+    title: `Fun`,
+    min: 10,
+    max: 19
+  },
+  {
+    title: `Movie Buff`,
+    min: 20,
+    max: 30
+  }
+];
+
 export const getRandomNumber = (min, max) => Math.floor(Math.random() * ((max + 1) - min) + min);
 
 export const getRandomArrayItem = (array) => array[getRandomNumber(0, array.length - 1)];
