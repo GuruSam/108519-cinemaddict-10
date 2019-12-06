@@ -34,20 +34,42 @@ export const formatTime = (time) => {
   return `${hours}h ${minutes}m`;
 };
 
+export const formatDate = (date) => {
+  const currentDate = new Date().getDate();
+  const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+  const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+
+  let result = `${date.getFullYear()}/${date.getMonth()}/${date.getDate()} ${hours}:${minutes}`;
+
+  switch (true) {
+    case date.getDate() === currentDate:
+      result = `Today`;
+      break;
+    case (date.getDate() + 1) === currentDate:
+      result = `Yesterday`;
+      break;
+    case (date.getDate() + 2) === currentDate:
+      result = `2 days ago`;
+      break;
+  }
+
+  return result;
+};
+
 export const createElement = (template) => {
   const element = document.createElement(`div`);
   element.innerHTML = template;
 
-  return element.firstChild;
+  return element.firstElementChild;
 };
 
-export const render = (container, element, place = RenderPosition.BEFOREEND) => {
+export const render = (container, component, place = RenderPosition.BEFOREEND) => {
   if (place === RenderPosition.AFTERBEGIN) {
-    container.prepend(element);
+    container.prepend(component.getElement());
     return;
   }
 
-  container.append(element);
+  container.append(component.getElement());
 };
 
 export const isEscPressed = (evt) => {
