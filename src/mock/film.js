@@ -76,7 +76,7 @@ const createComments = (amount) => {
   return comments;
 };
 
-const generateRandomFilms = (filmAmount) => {
+const createRandomFilms = (filmAmount) => {
   const filmList = [];
   for (let i = 0; i < filmAmount; i++) {
     filmList.push({
@@ -101,4 +101,4 @@ const generateRandomFilms = (filmAmount) => {
   return filmList;
 };
 
-export {generateRandomFilms};
+export {createRandomFilms};

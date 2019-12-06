@@ -16,7 +16,7 @@ const renderFilm = (film, section) => {
   const filmCard = new FilmCardComponent(film);
   const filmDetails = new FilmDetailsComponent(film);
 
-  const onFilmClickHandler = (evt) => {
+  filmCard.setClickHandler((evt) => {
     if (evt.target.matches(`.film-card__title`) ||
       evt.target.matches(`.film-card__poster`) ||
       evt.target.matches(`.film-card__comments`)) {
@@ -35,9 +35,7 @@ const renderFilm = (film, section) => {
 
       document.addEventListener(`keydown`, onEscPress);
     }
-  };
-
-  filmCard.setClickHandler(onFilmClickHandler);
+  });
 
   render(section.querySelector(`.films-list__container`), filmCard);
 };
@@ -90,7 +88,7 @@ export default class PageController {
     if (filmList.length > INITIAL_FILM_AMOUNT) {
       render(filmSection.querySelector(`.films-list`), this._showMoreButtonComponent);
 
-      const onShowMoreBtnClick = () => {
+      this._showMoreButtonComponent.setClickHandler(() => {
         let filmsLoaded = filmSection.querySelectorAll(`.films-list .film-card`).length;
         const loadMoreAmount = filmsLoaded + LOADED_FILM_AMOUNT;
 
@@ -103,9 +101,7 @@ export default class PageController {
         if (filmsLoaded === TOTAL_FILM_AMOUNT) {
           this._showMoreButtonComponent.removeElement();
         }
-      };
-
-      this._showMoreButtonComponent.setClickHandler(onShowMoreBtnClick);
+      });
     }
   }
 
