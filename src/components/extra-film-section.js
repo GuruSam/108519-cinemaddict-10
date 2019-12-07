@@ -1,9 +1,9 @@
-import {createElement} from "../utils";
+import Component from "./component";
 
-export default class ExtraSection {
+export default class ExtraSection extends Component {
   constructor(title) {
+    super();
     this._title = title;
-    this._element = null;
   }
 
   getTemplate() {
@@ -12,17 +12,5 @@ export default class ExtraSection {
 
       <div class="films-list__container"></div>
     </section>`;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,9 +1,9 @@
-import {createElement} from "../utils";
+import Component from "./component";
 
-export default class Filter {
+export default class Filter extends Component {
   constructor(filters) {
+    super();
     this._filters = filters;
-    this._element = null;
   }
 
   renderFilters(filters) {
@@ -18,17 +18,5 @@ export default class Filter {
     ${this.renderFilters(this._filters)}
     <a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>
   </nav>`;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

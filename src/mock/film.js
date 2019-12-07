@@ -1,4 +1,4 @@
-import {getRandomNumber, getRandomArrayItem, getRandomBoolean} from '../utils';
+import {getRandomNumber, getRandomArrayItem, getRandomBoolean} from '../utils/helpers';
 
 const MIN_YEAR = 1940;
 const MAX_YEAR = 2019;
@@ -23,6 +23,23 @@ const filmPosters = [
   `the-great-flamarion.jpg`,
   `the-man-with-the-golden-arm.jpg`
 ];
+const emojis = [
+  `angry.png`,
+  `puke.png`,
+  `sleeping.png`,
+  `smile.png`,
+  `trophy.png`
+];
+const commentTexts = [
+  `Vigil assimilants, tanquam nobilis impositio.`,
+  `Glos albus classis est.`,
+  `Brevis fiscinas ducunt ad index`,
+  `Sunt adgiumes carpseris primus, noster verpaes`,
+  `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`
+];
+const commentAuthors = [
+  `Tim Macoveev`, `John Doe`, `Kurtka Beina`
+];
 
 const generateRating = () => getRandomNumber(0, 9) + `.` + getRandomNumber(0, 9);
 
@@ -37,24 +54,51 @@ const generateDescription = () => {
   return randomDescription.join(`. `);
 };
 
-const generateRandomFilm = () => {
-  return {
-    title: getRandomArrayItem(filmTitles),
-    poster: getRandomArrayItem(filmPosters),
-    director: `John Stone`,
-    writers: [`Anne Wigton`, `Heinz Herald`, `Richard Weil`],
-    actors: [`Erich von Stroheim`, `Mary Beth Hughes`, `Dan Duryea`],
-    country: `USA`,
-    description: generateDescription(),
-    rating: generateRating(),
-    date: `30 March`,
-    year: getRandomNumber(MIN_YEAR, MAX_YEAR),
-    duration: getRandomNumber(50, 150),
-    genres: [`Horror`, `Comedy`, `Romance`],
-    comments: getRandomNumber(0, 50),
-    isWatched: getRandomBoolean(),
-    isFavorite: getRandomBoolean(),
-  };
+const createRandomDate = () => {
+  const randomDate = new Date();
+  randomDate.setDate(randomDate.getDate() - getRandomNumber(0, 7));
+
+  return randomDate;
 };
 
-export {generateRandomFilm};
+const createComments = (amount) => {
+  const comments = [];
+
+  for (let i = 0; i < amount; i++) {
+    comments.push({
+      emoji: getRandomArrayItem(emojis),
+      text: getRandomArrayItem(commentTexts),
+      author: getRandomArrayItem(commentAuthors),
+      date: createRandomDate()
+    });
+  }
+
+  return comments;
+};
+
+const createRandomFilms = (filmAmount) => {
+  const filmList = [];
+  for (let i = 0; i < filmAmount; i++) {
+    filmList.push({
+      title: getRandomArrayItem(filmTitles),
+      poster: getRandomArrayItem(filmPosters),
+      director: `John Stone`,
+      writers: [`Anne Wigton`, `Heinz Herald`, `Richard Weil`],
+      actors: [`Erich von Stroheim`, `Mary Beth Hughes`, `Dan Duryea`],
+      country: `USA`,
+      description: generateDescription(),
+      rating: generateRating(),
+      date: `30 March`,
+      year: getRandomNumber(MIN_YEAR, MAX_YEAR),
+      duration: getRandomNumber(50, 150),
+      genres: [`Horror`, `Comedy`, `Romance`],
+      isWatched: getRandomBoolean(),
+      isFavorite: getRandomBoolean(),
+      comments: createComments(getRandomNumber(0, 40))
+    });
+  }
+
+  return filmList;
+};
+
+export {createRandomFilms};
