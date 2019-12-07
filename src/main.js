@@ -2,14 +2,13 @@ import FilterComponent from './components/filter.js';
 import ProfileRatingComponent from "./components/profile-rating";
 import {generateFilters} from "./mock/filters";
 import {createRandomFilms} from "./mock/film";
-import {getRandomNumber} from "./utils";
-import {render, RenderPosition} from "./utils";
+import {getRandomNumber} from "./utils/helpers";
+import {render, RenderPosition} from "./utils/render";
+import {Films} from "./utils/const";
 import PageController from "./controllers/PageController";
 
-const TOTAL_FILM_AMOUNT = 10;
-
 // Генерация случайных фильмов
-const filmList = createRandomFilms(TOTAL_FILM_AMOUNT);
+const filmList = createRandomFilms(Films.TOTAL_AMOUNT);
 
 // Рендер меню и контент-блока
 const mainContainer = document.querySelector(`.main`);

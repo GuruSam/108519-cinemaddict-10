@@ -1,4 +1,4 @@
-import {getRandomNumber, getRandomArrayItem, getRandomBoolean} from '../utils';
+import {getRandomNumber, getRandomArrayItem, getRandomBoolean} from '../utils/helpers';
 
 const MIN_YEAR = 1940;
 const MAX_YEAR = 2019;

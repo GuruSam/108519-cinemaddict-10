@@ -1,26 +1,3 @@
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
-};
-
-export const userRatings = [
-  {
-    title: `Novice`,
-    min: 0,
-    max: 9
-  },
-  {
-    title: `Fun`,
-    min: 10,
-    max: 19
-  },
-  {
-    title: `Movie Buff`,
-    min: 20,
-    max: 30
-  }
-];
-
 export const getRandomNumber = (min, max) => Math.floor(Math.random() * ((max + 1) - min) + min);
 
 export const getRandomArrayItem = (array) => array[getRandomNumber(0, array.length - 1)];
@@ -34,12 +11,15 @@ export const formatTime = (time) => {
   return `${hours}h ${minutes}m`;
 };
 
+const formatDateNumber = (number) => number < 10 ? `0${number}` : number;
+
 export const formatDate = (date) => {
   const currentDate = new Date().getDate();
-  const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
-  const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+  const day = formatDateNumber(date.getDate());
+  const hours = formatDateNumber(date.getHours());
+  const minutes = formatDateNumber(date.getMinutes());
 
-  let result = `${date.getFullYear()}/${date.getMonth()}/${date.getDate()} ${hours}:${minutes}`;
+  let result = `${date.getFullYear()}/${date.getMonth()}/${day} ${hours}:${minutes}`;
 
   switch (true) {
     case date.getDate() === currentDate:
@@ -61,15 +41,6 @@ export const createElement = (template) => {
   element.innerHTML = template;
 
   return element.firstElementChild;
-};
-
-export const render = (container, component, place = RenderPosition.BEFOREEND) => {
-  if (place === RenderPosition.AFTERBEGIN) {
-    container.prepend(component.getElement());
-    return;
-  }
-
-  container.append(component.getElement());
 };
 
 export const isEscPressed = (evt) => {

@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import {createElement} from "../utils/helpers";
 
 export default class Component {
   constructor() {
@@ -22,7 +22,6 @@ export default class Component {
   }
 
   removeElement() {
-    this.getElement().remove();
     this._element = null;
   }
 }

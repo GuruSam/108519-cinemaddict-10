@@ -1,4 +1,4 @@
-import {formatTime} from "../utils";
+import {formatTime} from "../utils/helpers";
 import Component from "./component";
 
 export default class FilmCard extends Component {

@@ -1,5 +1,5 @@
-import {userRatings} from "../utils";
 import Component from "./component";
+import {userRatings} from "../utils/const";
 
 export default class ProfileRating extends Component {
   constructor(moviesWatchedAmount) {

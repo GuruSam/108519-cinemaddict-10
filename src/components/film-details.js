@@ -1,4 +1,4 @@
-import {formatTime, formatDate} from "../utils";
+import {formatTime, formatDate} from "../utils/helpers";
 import Component from "./component";
 
 export default class FilmDetails extends Component {
