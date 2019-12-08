@@ -52,17 +52,16 @@ export default class PageController {
         .sort((a, b) => b.comments.length - a.comments.length).slice(0, Films.EXTRA_FILM_AMOUNT);
 
       if (topRatedFilms.some((film) => film.rating !== 0)) {
-        render(filmSection, new ExtraSectionComponent(`Top Rated`));
+        const extraSection = new ExtraSectionComponent(`Top Rated`);
+        render(filmSection, extraSection);
+        renderFilms(topRatedFilms, extraSection.getElement());
       }
 
-      if (mostCommentedFilms.some((film) => film.comments !== 0)) {
-        render(filmSection, new ExtraSectionComponent(`Most Commented`));
+      if (mostCommentedFilms.some((film) => film.comments.length !== 0)) {
+        const extraSection = new ExtraSectionComponent(`Most Commented`);
+        render(filmSection, extraSection);
+        renderFilms(mostCommentedFilms, extraSection.getElement());
       }
-
-      const extraSections = filmSection.querySelectorAll(`.films-list--extra`);
-
-      renderFilms(topRatedFilms, extraSections[0]);
-      renderFilms(mostCommentedFilms, extraSections[1]);
     } else {
       filmSection.replaceChild(this._noDataComponent.getElement(), filmSection.querySelector(`.films-list`));
     }
