@@ -21,30 +21,32 @@ export const remove = (component) => {
   component.removeElement();
 };
 
-export const renderFilm = (film, section) => {
-  const filmCard = new FilmCardComponent(film);
-  const filmDetails = new FilmDetailsComponent(film);
+export const renderFilms = (filmList, section) => {
+  for (const film of filmList) {
+    const filmCard = new FilmCardComponent(film);
+    const filmDetails = new FilmDetailsComponent(film);
 
-  filmCard.setClickHandler((evt) => {
-    if (evt.target.matches(`.film-card__title`) ||
-      evt.target.matches(`.film-card__poster`) ||
-      evt.target.matches(`.film-card__comments`)) {
-      render(section.closest(`.main`), filmDetails);
+    filmCard.setClickHandler((evt) => {
+      if (evt.target.matches(`.film-card__title`) ||
+        evt.target.matches(`.film-card__poster`) ||
+        evt.target.matches(`.film-card__comments`)) {
+        render(section.closest(`.main`), filmDetails);
 
-      const onEscPress = (keyEvt) => {
-        if (isEscPressed(keyEvt)) {
+        const onEscPress = (keyEvt) => {
+          if (isEscPressed(keyEvt)) {
+            remove(filmDetails);
+            document.removeEventListener(`keydown`, onEscPress);
+          }
+        };
+
+        filmDetails.setCloseButtonHandler(() => {
           remove(filmDetails);
-          document.removeEventListener(`keydown`, onEscPress);
-        }
-      };
+        });
 
-      filmDetails.setCloseButtonHandler(() => {
-        remove(filmDetails);
-      });
+        document.addEventListener(`keydown`, onEscPress);
+      }
+    });
 
-      document.addEventListener(`keydown`, onEscPress);
-    }
-  });
-
-  render(section.querySelector(`.films-list__container`), filmCard);
+    render(section.querySelector(`.films-list__container`), filmCard);
+  }
 };
