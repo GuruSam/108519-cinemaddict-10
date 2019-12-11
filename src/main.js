@@ -18,7 +18,8 @@ render(headerContainer, new ProfileRatingComponent(getRandomNumber(0, 30)));
 
 // Рендер фильтров
 const filters = generateFilters(filmList);
-render(mainContainer, new FilterComponent(filters), RenderPosition.AFTERBEGIN);
+const filterComponent = new FilterComponent(filters);
+render(mainContainer, filterComponent, RenderPosition.AFTERBEGIN);
 
 const page = new PageController(mainContainer);
 page.render(filmList);

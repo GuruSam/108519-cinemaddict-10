@@ -9,6 +9,8 @@ import {Films} from "../utils/const";
 export default class PageController {
   constructor(container) {
     this._container = container;
+    this._filmList = [];
+    this._onDataChange = this._onDataChange.bind(this);
 
     this._sortComponent = new SortComponent();
     this._noDataComponent = new NoDataComponent();
@@ -19,6 +21,7 @@ export default class PageController {
   render(filmList) {
     const filmSection = this._filmSectionComponent.getElement();
     const defaultList = filmList.slice();
+    this._filmList = filmList;
 
     render(this._container, this._sortComponent);
     render(this._container, this._filmSectionComponent);
@@ -39,13 +42,12 @@ export default class PageController {
       }
 
       filmSection.querySelector(`.films-list__container`).innerHTML = ``;
-      renderFilms(filmList.slice(0, filmsLoaded), filmSection);
+      renderFilms(filmList.slice(0, filmsLoaded), filmSection, this._onDataChange);
     });
 
     if (filmList.length) {
-      renderFilms(filmList.slice(0, Films.INITIAL_AMOUNT), filmSection);
+      renderFilms(filmList.slice(0, Films.INITIAL_AMOUNT), filmSection, this._onDataChange);
 
-      // Сортировка фильмов по Top Rated и Most Commented
       const topRatedFilms = filmList.slice()
         .sort((a, b) => b.rating - a.rating).slice(0, Films.EXTRA_FILM_AMOUNT);
       const mostCommentedFilms = filmList.slice()
@@ -60,26 +62,35 @@ export default class PageController {
       if (mostCommentedFilms.some((film) => film.comments.length !== 0)) {
         const extraSection = new ExtraSectionComponent(`Most Commented`);
         render(filmSection, extraSection);
-        renderFilms(mostCommentedFilms, extraSection.getElement());
+        renderFilms(mostCommentedFilms, extraSection.getElement(), this._onDataChange);
       }
     } else {
       filmSection.replaceChild(this._noDataComponent.getElement(), filmSection.querySelector(`.films-list`));
     }
 
-    // Рендер кнопки Show More и установка клик-события
     if (filmList.length > Films.INITIAL_AMOUNT) {
       render(filmSection.querySelector(`.films-list`), this._showMoreButtonComponent);
 
-      this._showMoreButtonComponent.setClickHandler(() => {
+      this._showMoreButtonComponent.onButtonClick(() => {
         let filmsLoaded = filmSection.querySelectorAll(`.films-list .film-card`).length;
         const loadMoreAmount = filmsLoaded + Films.LOAD_AMOUNT;
 
-        renderFilms(filmList.slice(filmsLoaded, loadMoreAmount), filmSection);
+        renderFilms(filmList.slice(filmsLoaded, loadMoreAmount), filmSection, this._onDataChange);
 
         if (loadMoreAmount === Films.TOTAL_AMOUNT) {
           remove(this._showMoreButtonComponent);
         }
       });
+    }
+  }
+
+  _onDataChange(filmController, oldFilm, newFilm) {
+    const index = this._filmList.indexOf(oldFilm);
+
+    if (index !== -1) {
+      this._filmList[index] = newFilm;
+
+      filmController.render(this._filmList[index]);
     }
   }
 }

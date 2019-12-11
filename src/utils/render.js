@@ -1,6 +1,4 @@
-import FilmCardComponent from "../components/film-card";
-import FilmDetailsComponent from "../components/film-details";
-import {isEscPressed} from "./helpers";
+import FilmController from "../controllers/FilmController";
 
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
@@ -21,32 +19,17 @@ export const remove = (component) => {
   component.removeElement();
 };
 
-export const renderFilms = (filmList, section) => {
+export const renderFilms = (filmList, section, onDataChange) => {
   for (const film of filmList) {
-    const filmCard = new FilmCardComponent(film);
-    const filmDetails = new FilmDetailsComponent(film);
+    const movie = new FilmController(section, onDataChange);
+    movie.render(film);
+  }
+};
 
-    filmCard.setClickHandler((evt) => {
-      if (evt.target.matches(`.film-card__title`) ||
-        evt.target.matches(`.film-card__poster`) ||
-        evt.target.matches(`.film-card__comments`)) {
-        render(section.closest(`.main`), filmDetails);
+export const replace = (newComponent, oldComponent) => {
+  const parent = oldComponent.getElement().parentNode;
 
-        const onEscPress = (keyEvt) => {
-          if (isEscPressed(keyEvt)) {
-            remove(filmDetails);
-            document.removeEventListener(`keydown`, onEscPress);
-          }
-        };
-
-        filmDetails.setCloseButtonHandler(() => {
-          remove(filmDetails);
-        });
-
-        document.addEventListener(`keydown`, onEscPress);
-      }
-    });
-
-    render(section.querySelector(`.films-list__container`), filmCard);
+  if (parent.contains(oldComponent.getElement())) {
+    parent.replaceChild(newComponent.getElement(), oldComponent.getElement());
   }
 };
