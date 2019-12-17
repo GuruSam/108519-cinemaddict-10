@@ -1,7 +1,7 @@
 import {formatTime} from "../utils/helpers";
-import Component from "./component";
+import SmartComponent from "./smart-component";
 
-export default class FilmCard extends Component {
+export default class FilmCard extends SmartComponent {
   constructor(film) {
     super();
     this._film = film;
@@ -30,19 +30,40 @@ export default class FilmCard extends Component {
   </article>`;
   }
 
+  set film(newFilm) {
+    this._film = newFilm;
+  }
+
   onFilmClick(handler) {
+    this._onFilmClick = handler;
     this.getElement().addEventListener(`click`, handler);
   }
 
   onAddToWatchlistClick(handler) {
+    this._onAddToWatchlistClick = handler;
     this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, handler);
   }
 
   onMarkAsWatchedClick(handler) {
+    this._onMarkAsWatchedClick = handler;
     this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, handler);
   }
 
   onFavoriteClick(handler) {
+    this._onFavoriteClick = handler;
     this.getElement().querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, handler);
+  }
+
+  recoverListeners() {
+    this._subscribeOnEvents();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.addEventListener(`click`, this._onFilmClick);
+    element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchlistClick);
+    element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onMarkAsWatchedClick);
+    element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onFavoriteClick);
   }
 }

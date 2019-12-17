@@ -1,9 +1,7 @@
 import FilterComponent from "../components/filter";
-import {remove, render, RenderPosition} from "../utils/render";
+import {render, RenderPosition} from "../utils/render";
+import {generateFilters} from "../mock/filters";
 
-/**
- * Контроллер пока не используется.
- */
 export default class FilterController {
   constructor(container, filters) {
     this._container = container;
@@ -12,11 +10,13 @@ export default class FilterController {
   }
 
   render() {
-    if (this._filterComponent) {
-      remove(this._filterComponent);
-    }
-
     this._filterComponent = new FilterComponent(this._filters);
     render(this._container, this._filterComponent, RenderPosition.AFTERBEGIN);
+  }
+
+  updateComponent(filmList) {
+    this._filters = generateFilters(filmList);
+    this._filterComponent.filters = this._filters;
+    this._filterComponent.rerender();
   }
 }
