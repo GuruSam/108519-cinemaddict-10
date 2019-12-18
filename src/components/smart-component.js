@@ -13,12 +13,9 @@ export default class SmartComponent extends Component {
     const oldElement = this.getElement();
 
     this.removeElement();
-
     const newElement = this.getElement();
-    newElement.setAttribute(`hidden`, ``);
 
     oldElement.replaceWith(newElement);
-    newElement.removeAttribute(`hidden`);
     this.recoverListeners();
   }
 }

@@ -5,10 +5,9 @@ import {remove, render} from "../utils/render";
 
 
 export default class FilmController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange) {
     this._container = container;
     this._onDataChange = onDataChange;
-    this._onViewChange = onViewChange;
     this._filmCard = null;
     this._filmDetails = null;
     this._film = null;
@@ -20,6 +19,7 @@ export default class FilmController {
     this._filmDetails = new FilmDetailsComponent(film);
 
     this.initFilmCardListeners();
+    this.initFilmDetailsListeners();
 
     render(this._container.querySelector(`.films-list__container`), this._filmCard);
   }
@@ -33,18 +33,12 @@ export default class FilmController {
     this._filmDetails.rerender();
   }
 
-  setDefaultView() {
-
-  }
-
   initFilmCardListeners() {
     this._filmCard.onFilmClick((evt) => {
       if (evt.target.matches(`.film-card__title`) ||
         evt.target.matches(`.film-card__poster`) ||
         evt.target.matches(`.film-card__comments`)) {
         render(this._container.closest(`.main`), this._filmDetails);
-
-        this.initFilmDetailsListeners();
 
         const onEscPress = (keyEvt) => {
           if (isEscPressed(keyEvt)) {

@@ -23,4 +23,10 @@ export default class Filter extends SmartComponent {
   set filters(newFilters) {
     this._filters = newFilters;
   }
+
+  recoverListeners() {
+    this._subscribeOnEvents();
+  }
+
+  _subscribeOnEvents() {}
 }
