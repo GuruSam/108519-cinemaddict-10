@@ -24,6 +24,11 @@ export default class FilmController {
     render(this._container.querySelector(`.films-list__container`), this._filmCard);
   }
 
+  destroy() {
+    remove(this._filmCard);
+    remove(this._filmDetails);
+  }
+
   updateComponents(newFilm) {
     this._film = newFilm;
     this._filmCard.film = newFilm;
@@ -32,6 +37,13 @@ export default class FilmController {
     this._filmCard.rerender();
     this._filmDetails.rerender();
   }
+
+  // _onFilmEscPress(evt) {
+  //   if (isEscPressed(evt)) {
+  //     remove(this._filmDetails);
+  //     document.removeEventListener(`keydown`, this._onFilmEscPress);
+  //   }
+  // }
 
   initFilmCardListeners() {
     this._filmCard.onFilmClick((evt) => {
