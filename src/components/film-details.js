@@ -15,7 +15,7 @@ export default class FilmDetails extends SmartComponent {
       .sort((a, b) => a.date - b.date);
 
     return sortedComments.map((comment) =>
-      `<li class="film-details__comment">
+      `<li class="film-details__comment" data-id="${comment.id}">
         <span class="film-details__comment-emoji">
           <img src="./images/emoji/${comment.emoji}" width="55" height="55" alt="emoji">
         </span>
@@ -229,6 +229,12 @@ export default class FilmDetails extends SmartComponent {
     this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, handler);
   }
 
+  onCommentDeleteClick(handler) {
+    this._onCommentDeleteClick = handler;
+    const deleteButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    deleteButtons.forEach((it) => it.addEventListener(`click`, handler));
+  }
+
   recoverListeners() {
     this._subscribeOnEvents();
   }
@@ -239,6 +245,12 @@ export default class FilmDetails extends SmartComponent {
     element.querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._onAddToWatchlistClick);
     element.querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._onMarkAsWatchedClick);
     element.querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._onFavoriteClick);
+
+    const deleteButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+
+    if (deleteButtons) {
+      deleteButtons.forEach((it) => it.addEventListener(`click`, this._onCommentDeleteClick));
+    }
 
     element.querySelector(`.film-details__emoji-list`).addEventListener(`click`, (evt) => {
       this._emojiLabel = evt.target;

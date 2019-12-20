@@ -48,7 +48,10 @@ export default class Movies {
     if (index !== -1) {
       this._filmList[index] = film;
       this._dataChangeHandlers.forEach((handler) => handler());
+      return true;
     }
+
+    return false;
   }
 
   setFilter(filterType) {

@@ -5,12 +5,14 @@ import {remove, render} from "../utils/render";
 
 
 export default class FilmController {
-  constructor(container, onDataChange) {
+  constructor(container, onDataChange, duplicate = null) {
     this._container = container;
     this._onDataChange = onDataChange;
     this._filmCard = null;
     this._filmDetails = null;
     this._film = null;
+
+    this._duplicate = duplicate;
   }
 
   render(film) {
@@ -105,6 +107,18 @@ export default class FilmController {
       this._onDataChange(this, this._film, Object.assign({}, this._film, {
         isFavorite: !this._film.isFavorite
       }));
+    });
+
+    this._filmDetails.onCommentDeleteClick((evt) => {
+      evt.preventDefault();
+
+      const deletedCommentId = evt.target.closest(`.film-details__comment`).dataset.id;
+      const filmComments = this._film.comments;
+      const index = filmComments.findIndex((it) => it.id === parseInt(deletedCommentId, 10));
+
+      this._film.comments.splice(index, 1);
+
+      this._onDataChange(this, this._film, Object.assign({}, this._film, filmComments));
     });
   }
 }
