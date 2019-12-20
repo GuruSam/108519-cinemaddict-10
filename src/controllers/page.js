@@ -6,6 +6,7 @@ import ShowMoreButtonComponent from "../components/show-more-btn";
 import {render, remove} from "../utils/render";
 import {Films} from "../utils/const";
 import FilmController from "./film";
+import {getFilmsToLoadAmount} from "../utils/helpers";
 
 export default class PageController {
   constructor(container, filterController, moviesModel) {
@@ -59,11 +60,9 @@ export default class PageController {
     render(this._container, this._filmSectionComponent);
 
     this._sortComponent.setSortTypeChangeHandler((sortType) => {
-      const filmsLoaded = this._renderedFilmsAmount;
       this._moviesModel.sortType = sortType;
 
-      filmSection.querySelector(`.films-list__container`).innerHTML = ``;
-      this.renderFilms(this._moviesModel.getFilmList().slice(0, filmsLoaded), filmSection);
+      this._updateFilms();
     });
 
     if (filmList.length) {
@@ -120,20 +119,24 @@ export default class PageController {
   _removeFilms() {
     this._filmControllers.forEach((it) => it.destroy());
     this._filmControllers = [];
+    remove(this._showMoreButtonComponent);
+    this._showMoreButtonComponent.removeElement();
   }
 
   _updateFilms() {
-    const filmList = this._moviesModel.getFilmList();
     this._removeFilms();
-    remove(this._showMoreButtonComponent);
-    this._showMoreButtonComponent.removeElement();
-    this.renderFilms(filmList.slice(0, Films.INITIAL_AMOUNT), this._filmSectionComponent.getElement());
+
+    const filmList = this._moviesModel.getFilmList();
+    const filmAmount = getFilmsToLoadAmount(this._renderedFilmsAmount);
+
+    this.renderFilms(filmList.slice(0, filmAmount), this._filmSectionComponent.getElement());
   }
 
   _onDataChange(filmController, oldData, newData) {
-    if (this._moviesModel.updateFilm(newData.id, newData)) {
+    this._moviesModel.onDataChange(() => {
       filmController.updateComponents(newData);
-    }
+    });
+    this._moviesModel.updateFilm(newData.id, newData);
   }
 
   _onFilterChange() {

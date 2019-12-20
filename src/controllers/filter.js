@@ -34,12 +34,6 @@ export default class FilterController {
     });
   }
 
-  // updateComponent(filmList) {
-  //   this._filters = generateFilters(filmList);
-  //   this._filterComponent.filters = this._filters;
-  //   this._filterComponent.rerender();
-  // }
-
   _onDataChange() {
     this._filters = generateFilters(this._moviesModel.filmListDefault);
     this._filterComponent.filters = this._filters;

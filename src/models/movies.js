@@ -48,6 +48,10 @@ export default class Movies {
     if (index !== -1) {
       this._filmList[index] = film;
       this._dataChangeHandlers.forEach((handler) => handler());
+
+      // Удаляем последний добавленный обработчик для конкретного контроллера фильма,
+      // чтобы не вызывать его при каждом обновлении данных
+      this._dataChangeHandlers.pop();
       return true;
     }
 
