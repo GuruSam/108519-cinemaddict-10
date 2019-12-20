@@ -240,12 +240,11 @@ export default class FilmDetails extends SmartComponent {
     document.removeEventListener(`keydown`, this._onKeydown);
   }
 
-  // Частичный перерендер для элементов компонента, обладающего анимацией,
+  // Частичный перерендер элементов компонента, обладающего анимацией,
   // чтобы не вызывать при вызове rerender() эту анимацию
   rerender() {
     this.getElement().querySelector(`.film-details__controls`).outerHTML = this.getFilmControlsTemplate();
     this.getElement().querySelector(`.form-details__middle-container`).outerHTML = this.getMiddleContainerTemplate();
-    this.getElement().querySelector(`.film-details__comments-list`).innerHTML = this.renderComments(this._film.comments);
     this.getElement().querySelector(`.film-details__comments-wrap`).outerHTML = this.getCommentsWrapTemplate();
 
     this.recoverListeners();

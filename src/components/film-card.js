@@ -37,7 +37,7 @@ export default class FilmCard extends SmartComponent {
   </article>`;
   }
 
-  // Частичный перерендер для элементов компонента, обладающего анимацией,
+  // Частичный перерендер элементов компонента, обладающего анимацией,
   // чтобы не вызывать при вызове rerender() эту анимацию
   rerender() {
     this.getElement().querySelector(`.film-card__controls`).innerHTML = this.getCardControlsTemplate();
