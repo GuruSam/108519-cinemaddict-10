@@ -110,6 +110,6 @@ export default class FilmController {
       if (isSubmitPressed(evt) && document.activeElement === this._filmDetails.getElement().querySelector(`.film-details__comment-input`)) {
         this._filmDetails.getElement().querySelector(`form`).submit();
       }
-    })
+    });
   }
 }
