@@ -1,14 +1,13 @@
 import FilmCardComponent from "../components/film-card";
 import FilmDetailsComponent from "../components/film-details";
-import {isEscPressed} from "../utils/helpers";
+import {isEscPressed, isSubmitPressed} from "../utils/helpers";
 import {remove, render} from "../utils/render";
 
 
 export default class FilmController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange) {
     this._container = container;
     this._onDataChange = onDataChange;
-    this._onViewChange = onViewChange;
     this._filmCard = null;
     this._filmDetails = null;
     this._film = null;
@@ -20,8 +19,14 @@ export default class FilmController {
     this._filmDetails = new FilmDetailsComponent(film);
 
     this.initFilmCardListeners();
+    this.initFilmDetailsListeners();
 
     render(this._container.querySelector(`.films-list__container`), this._filmCard);
+  }
+
+  destroy() {
+    remove(this._filmCard);
+    remove(this._filmDetails);
   }
 
   updateComponents(newFilm) {
@@ -33,27 +38,12 @@ export default class FilmController {
     this._filmDetails.rerender();
   }
 
-  setDefaultView() {
-
-  }
-
   initFilmCardListeners() {
     this._filmCard.onFilmClick((evt) => {
       if (evt.target.matches(`.film-card__title`) ||
         evt.target.matches(`.film-card__poster`) ||
         evt.target.matches(`.film-card__comments`)) {
-        render(this._container.closest(`.main`), this._filmDetails);
-
-        this.initFilmDetailsListeners();
-
-        const onEscPress = (keyEvt) => {
-          if (isEscPressed(keyEvt)) {
-            remove(this._filmDetails);
-            document.removeEventListener(`keydown`, onEscPress);
-          }
-        };
-
-        document.addEventListener(`keydown`, onEscPress);
+        this._filmDetails.show(this._container.closest(`.main`));
       }
     });
 
@@ -99,6 +89,27 @@ export default class FilmController {
       this._onDataChange(this, this._film, Object.assign({}, this._film, {
         isFavorite: !this._film.isFavorite
       }));
+    });
+
+    this._filmDetails.onCommentDeleteClick((evt) => {
+      evt.preventDefault();
+
+      const deletedCommentId = evt.target.closest(`.film-details__comment`).dataset.id;
+      const index = this._film.comments.findIndex((it) => it.id === parseInt(deletedCommentId, 10));
+
+      this._film.comments.splice(index, 1);
+
+      this._onDataChange(this, this._film, Object.assign({}, this._film, this._film.comments));
+    });
+
+    this._filmDetails.onKeydown((evt) => {
+      if (isEscPressed(evt)) {
+        this._filmDetails.hide();
+      }
+
+      if (isSubmitPressed(evt) && document.activeElement === this._filmDetails.getElement().querySelector(`.film-details__comment-input`)) {
+        this._filmDetails.getElement().querySelector(`form`).submit();
+      }
     });
   }
 }
