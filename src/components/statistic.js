@@ -1,8 +1,49 @@
 import Component from "./component";
+import Chart from "chart.js";
 
 export default class Statistic extends Component {
-  constructor() {
+  constructor(moviesModel) {
     super();
+    this._moviesModel = moviesModel;
+    this._chart = this.renderChart();
+  }
+
+  renderChart() {
+    const ctx = this.getElement().querySelector(`.statistic__chart`);
+    const genresChart = [];
+    const genresData = {};
+    const filmList = this._moviesModel.filmListDefault;
+
+    filmList.map((film) => film.genres.forEach((it) => genresChart.push(it)));
+    genresChart.forEach((it) => {
+      genresData[it] = (genresData[it] || 0) + 1;
+    });
+
+    return new Chart(ctx, {
+      type: `horizontalBar`,
+      data: {
+        labels: Object.keys(genresData),
+        datasets: [{
+          label: `Просмотренных фильмов`,
+          data: Object.values(genresData),
+          backgroundColor: `#ffe800`,
+          barThickness: 20
+        }]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            ticks: {
+              beginAtZero: true
+            },
+            stacked: true
+          }],
+          yAxes: [{
+            stacked: true
+          }]
+        }
+      }
+    });
   }
 
   getTemplate() {

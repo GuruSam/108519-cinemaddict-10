@@ -6,11 +6,11 @@ import ShowMoreButtonComponent from "../components/show-more-btn";
 import {render, remove} from "../utils/render";
 import {Films} from "../utils/const";
 import FilmController from "./film";
-import {checkForActiveState, getFilmsToLoadAmount} from "../utils/helpers";
+import {getFilmsToLoadAmount} from "../utils/helpers";
 import StatisticComponent from "../components/statistic";
 
 export default class PageController {
-  constructor(container, menuComponent, moviesModel) {
+  constructor(container, moviesModel) {
     this._container = container;
     this._moviesModel = moviesModel;
 
@@ -21,8 +21,7 @@ export default class PageController {
     this._noDataComponent = new NoDataComponent();
     this._filmSectionComponent = new FilmSectionComponent();
     this._showMoreButtonComponent = new ShowMoreButtonComponent();
-    this._statisticComponent = new StatisticComponent();
-    this._menuComponent = menuComponent;
+    this._statisticComponent = new StatisticComponent(this._moviesModel);
 
     this._filmControllers = [];
     this._extraFilmControllers = [];
@@ -30,12 +29,14 @@ export default class PageController {
     this._renderedFilmsAmount = 0;
   }
 
-  show() {
+  showMainPage() {
     this._sortComponent.show();
     this._filmSectionComponent.show();
+    this._statisticComponent.hide();
   }
 
-  hide() {
+  showStatPage() {
+    this._statisticComponent.show();
     this._sortComponent.hide();
     this._filmSectionComponent.hide();
   }
@@ -77,21 +78,6 @@ export default class PageController {
     this._sortComponent.onSortTypeChange((sortType) => {
       this._moviesModel.sortType = sortType;
       this._updateFilms();
-    });
-
-    this._menuComponent.onMenuItemClick((evt) => {
-      if (checkForActiveState(evt.target) && !evt.target.classList.contains(`main-navigation__item--additional`)) {
-        const filterType = evt.target.dataset.filterType;
-
-        this.show();
-        this._statisticComponent.hide();
-
-        this._moviesModel.setFilter(filterType);
-        this._menuComponent.currentFilterType = filterType;
-      } else if (evt.target.classList.contains(`main-navigation__item--additional`)) {
-        this.hide();
-        this._statisticComponent.show();
-      }
     });
 
     if (filmList.length) {

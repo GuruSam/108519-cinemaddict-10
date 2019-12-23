@@ -1,9 +1,17 @@
 import {Films} from "./const";
 
 export const checkForActiveState = (target) => {
-  if (!target.classList.contains(`main-navigation__item--active`)) {
-    target.parentNode.querySelector(`.main-navigation__item--active`).classList.remove(`main-navigation__item--active`);
-    target.classList.add(`main-navigation__item--active`);
+  const isActive = target.classList.contains(`main-navigation__item--active`);
+  const isMenuItem = target.classList.contains(`main-navigation__item`) || target.classList.contains(`main-navigation__item-count`);
+
+  if (isMenuItem && !isActive) {
+    target.closest(`.main-navigation`).querySelector(`.main-navigation__item--active`).classList.remove(`main-navigation__item--active`);
+
+    if (target.classList.contains(`main-navigation__item`)) {
+      target.classList.add(`main-navigation__item--active`);
+    } else {
+      target.parentNode.classList.add(`main-navigation__item--active`);
+    }
 
     return true;
   }
@@ -61,7 +69,7 @@ export const isEscPressed = (evt) => {
 };
 
 export const isSubmitPressed = (evt) => {
-  return evt.ctrlKey && (evt.key === `Enter` || evt.key === `Ent`);
+  return evt.ctrlKey && (evt.key === `Enter`);
 };
 
 export const getFilmsToLoadAmount = (renderedAmount) => {
