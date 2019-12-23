@@ -6,10 +6,11 @@ import ShowMoreButtonComponent from "../components/show-more-btn";
 import {render, remove} from "../utils/render";
 import {Films} from "../utils/const";
 import FilmController from "./film";
-import {getFilmsToLoadAmount} from "../utils/helpers";
+import {checkForActiveState, getFilmsToLoadAmount} from "../utils/helpers";
+import StatisticComponent from "../components/statistic";
 
 export default class PageController {
-  constructor(container, filterController, moviesModel) {
+  constructor(container, menuComponent, moviesModel) {
     this._container = container;
     this._moviesModel = moviesModel;
 
@@ -20,12 +21,23 @@ export default class PageController {
     this._noDataComponent = new NoDataComponent();
     this._filmSectionComponent = new FilmSectionComponent();
     this._showMoreButtonComponent = new ShowMoreButtonComponent();
+    this._statisticComponent = new StatisticComponent();
+    this._menuComponent = menuComponent;
 
-    this._filterController = filterController;
     this._filmControllers = [];
     this._extraFilmControllers = [];
     this._moviesModel.onFilterChange(this._onFilterChange);
     this._renderedFilmsAmount = 0;
+  }
+
+  show() {
+    this._sortComponent.show();
+    this._filmSectionComponent.show();
+  }
+
+  hide() {
+    this._sortComponent.hide();
+    this._filmSectionComponent.hide();
   }
 
   renderFilms(filmList, section, countFilms = true) {
@@ -58,11 +70,28 @@ export default class PageController {
 
     render(this._container, this._sortComponent);
     render(this._container, this._filmSectionComponent);
+    render(this._container, this._statisticComponent);
 
-    this._sortComponent.setSortTypeChangeHandler((sortType) => {
+    this._statisticComponent.hide();
+
+    this._sortComponent.onSortTypeChange((sortType) => {
       this._moviesModel.sortType = sortType;
-
       this._updateFilms();
+    });
+
+    this._menuComponent.onMenuItemClick((evt) => {
+      if (checkForActiveState(evt.target) && !evt.target.classList.contains(`main-navigation__item--additional`)) {
+        const filterType = evt.target.dataset.filterType;
+
+        this.show();
+        this._statisticComponent.hide();
+
+        this._moviesModel.setFilter(filterType);
+        this._menuComponent.currentFilterType = filterType;
+      } else if (evt.target.classList.contains(`main-navigation__item--additional`)) {
+        this.hide();
+        this._statisticComponent.show();
+      }
     });
 
     if (filmList.length) {

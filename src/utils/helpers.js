@@ -1,5 +1,16 @@
 import {Films} from "./const";
 
+export const checkForActiveState = (target) => {
+  if (!target.classList.contains(`main-navigation__item--active`)) {
+    target.parentNode.querySelector(`.main-navigation__item--active`).classList.remove(`main-navigation__item--active`);
+    target.classList.add(`main-navigation__item--active`);
+
+    return true;
+  }
+
+  return false;
+};
+
 export const getRandomNumber = (min, max) => Math.floor(Math.random() * ((max + 1) - min) + min);
 
 export const getRandomArrayItem = (array) => array[getRandomNumber(0, array.length - 1)];
