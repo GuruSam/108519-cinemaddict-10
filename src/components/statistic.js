@@ -8,38 +8,61 @@ export default class Statistic extends Component {
     this._chart = this.renderChart();
   }
 
-  renderChart() {
-    const ctx = this.getElement().querySelector(`.statistic__chart`);
-    const genresChart = [];
-    const genresData = {};
-    const filmList = this._moviesModel.filmListDefault;
+  _getGenresData(filmList) {
+    const genres = [];
+    const genresData = new Map();
 
-    filmList.map((film) => film.genres.forEach((it) => genresChart.push(it)));
-    genresChart.forEach((it) => {
-      genresData[it] = (genresData[it] || 0) + 1;
+    filmList.map((film) => film.genres.forEach((it) => genres.push(it)));
+
+    genres.forEach((it) => {
+      if (genresData.has(it)) {
+        const value = genresData.get(it);
+        genresData.set(it, value + 1);
+      } else {
+        genresData.set(it, 1);
+      }
     });
+
+    return genresData;
+  }
+
+  renderChart() {
+    const BAR_HEIGHT = 50;
+    const BAR_COLOR = `#ffe800`;
+    const LABEL_PADDING = 100;
+
+    const filmList = this._moviesModel.filmListDefault;
+    const ctx = this.getElement().querySelector(`.statistic__chart`);
+    const genresData = this._getGenresData(filmList);
+
+    const genresLabels = [...genresData.keys()];
+    const genresValues = [...genresData.values()];
+
+    ctx.height = BAR_HEIGHT * genresLabels.length;
 
     return new Chart(ctx, {
       type: `horizontalBar`,
       data: {
-        labels: Object.keys(genresData),
+        labels: genresLabels,
         datasets: [{
-          label: `Просмотренных фильмов`,
-          data: Object.values(genresData),
-          backgroundColor: `#ffe800`,
-          barThickness: 20
+          data: genresValues,
+          backgroundColor: BAR_COLOR,
+          categoryPercentage: 0.5,
+          barPercentage: 1
         }]
       },
       options: {
         scales: {
           xAxes: [{
+            display: false,
             ticks: {
               beginAtZero: true
-            },
-            stacked: true
+            }
           }],
           yAxes: [{
-            stacked: true
+            ticks: {
+              padding: LABEL_PADDING
+            }
           }]
         }
       }
