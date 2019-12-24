@@ -1,7 +1,7 @@
 import SmartComponent from "./smart-component";
 import {FilterTypes} from "../utils/const";
 
-export default class Filter extends SmartComponent {
+export default class Menu extends SmartComponent {
   constructor(filters) {
     super();
     this._filters = filters;
@@ -30,9 +30,14 @@ export default class Filter extends SmartComponent {
     this._currenFilterType = filterType;
   }
 
-  onFilterChange(handler) {
+  onMenuItemClick(handler) {
     this.getElement().addEventListener(`click`, handler);
     this._onFilterChange = handler;
+  }
+
+  onStatsClick(handler) {
+    this.getElement().querySelector(`.main-navigation__item--additional`).addEventListener(`click`, handler);
+    this._onStatsClick = handler;
   }
 
   recoverListeners() {
@@ -41,5 +46,6 @@ export default class Filter extends SmartComponent {
 
   _subscribeOnEvents() {
     this.getElement().addEventListener(`click`, this._onFilterChange);
+    this.getElement().querySelector(`.main-navigation__item--additional`).addEventListener(`click`, this._onStatsClick);
   }
 }
