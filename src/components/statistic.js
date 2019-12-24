@@ -1,5 +1,6 @@
 import Component from "./component";
 import Chart from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
 export default class Statistic extends Component {
   constructor(moviesModel) {
@@ -29,7 +30,9 @@ export default class Statistic extends Component {
   renderChart() {
     const BAR_HEIGHT = 50;
     const BAR_COLOR = `#ffe800`;
-    const LABEL_PADDING = 100;
+    const LABEL_PADDING = 80;
+    const LABEL_COLOR = `#fff`;
+    const LABEL_FONT_SIZE = 15;
 
     const filmList = this._moviesModel.filmListDefault;
     const ctx = this.getElement().querySelector(`.statistic__chart`);
@@ -61,11 +64,28 @@ export default class Statistic extends Component {
           }],
           yAxes: [{
             ticks: {
-              padding: LABEL_PADDING
+              padding: LABEL_PADDING,
+              fontColor: LABEL_COLOR,
+              fontSize: LABEL_FONT_SIZE
             }
           }]
+        },
+        plugins: {
+          datalabels: {
+            color: LABEL_COLOR,
+            font: {
+              size: LABEL_FONT_SIZE
+            },
+            anchor: `start`,
+            align: `left`,
+            offset: 40,
+          }
+        },
+        legend: {
+          display: false
         }
-      }
+      },
+      plugins: [ChartDataLabels]
     });
   }
 
