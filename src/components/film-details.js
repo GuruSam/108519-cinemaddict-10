@@ -1,4 +1,4 @@
-import {formatTime, formatDate} from "../utils/helpers";
+import {formatTime} from "../utils/helpers";
 import SmartComponent from "./smart-component";
 import {remove, render} from "../utils/render";
 
