@@ -22,7 +22,7 @@ menuComponent.onMenuItemClick((evt) => {
   if (checkForActiveState(evt.target) && !evt.target.classList.contains(`main-navigation__item--additional`)) {
     const filterType = evt.target.dataset.filterType ? evt.target.dataset.filterType : evt.target.parentNode.dataset.filterType;
 
-    page.showMainPage();
+    page.showFilmsPage();
 
     moviesModel.setFilter(filterType);
     menuComponent.currentFilterType = filterType;
