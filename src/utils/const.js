@@ -29,3 +29,9 @@ export const FilterTypes = {
   HISTORY: `history`,
   FAVORITES: `favorites`
 };
+
+export const Colors = {
+  BORDER_ERROR: `2px solid #cc0000`,
+  ERROR: `#cc0000`,
+  PENDING: `#808080`
+};

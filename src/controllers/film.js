@@ -3,6 +3,9 @@ import FilmDetailsComponent from "../components/film-details";
 import {isEscPressed, isSubmitPressed} from "../utils/helpers";
 import {remove, render} from "../utils/render";
 import API from "../api";
+import Comment from "../models/comment";
+import Movie from "../models/movie";
+import {Colors} from "../utils/const";
 
 
 export default class FilmController {
@@ -42,6 +45,54 @@ export default class FilmController {
     this._filmDetails.rerender();
   }
 
+  getComments() {
+    return this._film.comments;
+  }
+
+  toggleFormState(formSelector, formElements) {
+    const form = this._filmDetails.getElement().querySelector(`.${formSelector}`);
+    form.querySelectorAll(formElements)
+      .forEach((el) => {
+        if (el.hasAttribute(`disabled`)) {
+          el.removeAttribute(`disabled`);
+        } else {
+          el.setAttribute(`disabled`, ``);
+        }
+      });
+  }
+
+  shakeCommentForm() {
+    const form = this._filmDetails.getElement().querySelector(`.film-details__new-comment`);
+    const onTextareaChange = (evt) => {
+      evt.target.style.border = ``;
+      form.querySelector(`textarea`).removeEventListener(`input`, onTextareaChange);
+    };
+
+    form.querySelector(`textarea`).style.border = Colors.BORDER_ERROR;
+
+    form.classList.add(`shake`);
+    form.addEventListener(`animationend`, () => form.classList.remove(`shake`));
+    form.querySelector(`textarea`).addEventListener(`input`, onTextareaChange);
+  }
+
+  shakeRatingForm(label) {
+    const form = this._filmDetails.getElement().querySelector(`.film-details__user-rating-score`);
+    const originalColor = label.style.backgroundColor;
+
+    label.style.backgroundColor = Colors.ERROR;
+    form.classList.add(`shake`);
+    form.addEventListener(`animationend`, () => {
+      form.classList.remove(`shake`);
+      label.style.backgroundColor = originalColor;
+    });
+  }
+
+  _changeFilmData(updatedData) {
+    const newData = Object.assign({}, this._film, updatedData);
+
+    return this._onDataChange(this, this._film, new Movie(Movie.toRAW(newData)));
+  }
+
   initFilmCardListeners() {
     this._filmCard.onFilmClick((evt) => {
       if (evt.target.matches(`.film-card__title`) ||
@@ -65,27 +116,21 @@ export default class FilmController {
       evt.preventDefault();
       evt.target.setAttribute(`disabled`, `disabled`);
 
-      this._onDataChange(this, this._film, Object.assign({}, this._film, {
-        isInWatchlist: !this._film.isInWatchlist
-      }));
+      this._changeFilmData({isInWatchlist: !this._film.isInWatchlist});
     });
 
     this._filmCard.onMarkAsWatchedClick((evt) => {
       evt.preventDefault();
       evt.target.setAttribute(`disabled`, `disabled`);
 
-      this._onDataChange(this, this._film, Object.assign({}, this._film, {
-        isWatched: !this._film.isWatched
-      }));
+      this._changeFilmData({isWatched: !this._film.isWatched});
     });
 
     this._filmCard.onFavoriteClick((evt) => {
       evt.preventDefault();
       evt.target.setAttribute(`disabled`, `disabled`);
 
-      this._onDataChange(this, this._film, Object.assign({}, this._film, {
-        isFavorite: !this._film.isFavorite
-      }));
+      this._changeFilmData({isFavorite: !this._film.isFavorite});
     });
   }
 
@@ -93,36 +138,48 @@ export default class FilmController {
     this._filmDetails.onAddToWatchlistClick((evt) => {
       evt.preventDefault();
 
-      this._onDataChange(this, this._film, Object.assign({}, this._film, {
-        isInWatchlist: !this._film.isInWatchlist
-      }));
+      this._changeFilmData({isInWatchlist: !this._film.isInWatchlist});
     });
 
     this._filmDetails.onMarkAsWatchedClick((evt) => {
       evt.preventDefault();
 
-      this._onDataChange(this, this._film, Object.assign({}, this._film, {
-        isWatched: !this._film.isWatched
-      }));
+      this._changeFilmData({isWatched: !this._film.isWatched});
     });
 
     this._filmDetails.onFavoriteClick((evt) => {
       evt.preventDefault();
 
-      this._onDataChange(this, this._film, Object.assign({}, this._film, {
-        isFavorite: !this._film.isFavorite
-      }));
+      this._changeFilmData({isFavorite: !this._film.isFavorite});
     });
 
     this._filmDetails.onCommentDeleteClick((evt) => {
       evt.preventDefault();
 
       const deletedCommentId = evt.target.closest(`.film-details__comment`).dataset.id;
-      const index = this._film.comments.findIndex((it) => it.id === parseInt(deletedCommentId, 10));
+      const index = this._film.comments.findIndex((it) => it.id === deletedCommentId);
 
-      this._film.comments.splice(index, 1);
+      const comment = this._film.comments[index];
+      this._onDataChange(this, this._film, new Comment(comment.comment, comment.emotion, comment.id), true);
+    });
 
-      this._onDataChange(this, this._film, Object.assign({}, this._film, this._film.comments));
+    this._filmDetails.onRatingClick((evt) => {
+      if (evt.target.classList.contains(`film-details__user-rating-label`)) {
+        evt.preventDefault();
+
+        const input = evt.currentTarget.querySelector(`#${evt.target.getAttribute(`for`)}`);
+
+        if (!input.hasAttribute(`disabled`)) {
+          evt.target.style.opacity = `0.5`;
+          this.toggleFormState(`film-details__user-rating-wrap`, `button, input`);
+          this._changeFilmData({personalRating: parseInt(input.value, 10)})
+            .catch(() => {
+              this.toggleFormState(`film-details__user-rating-wrap`, `button, input`);
+              this.shakeRatingForm(evt.target);
+              evt.target.style.opacity = ``;
+            });
+        }
+      }
     });
 
     this._filmDetails.onKeydown((evt) => {
@@ -134,18 +191,11 @@ export default class FilmController {
         const commentInput = this._filmDetails.getElement().querySelector(`.film-details__comment-input`);
 
         if (document.activeElement === commentInput && commentInput.value && this._filmDetails.emotion) {
-          this._api.createComment(this._film.id, {
-            comment: commentInput.value,
-            date: new Date().toISOString(),
-            emotion: this._filmDetails.emotion
-          })
-            .then((data) => {
-              const newData = Object.assign({}, this._film, {
-                comments: data.comments,
-                commentIds: data.comments.map((comment) => comment.id)
-              });
-              this._moviesModel.setComments(this._film.id, data.comments);
-              this.updateComponents(newData);
+          this.toggleFormState(`film-details__new-comment`, `input, textarea`);
+          this._onDataChange(this, this._film, new Comment(commentInput.value, this._filmDetails.emotion))
+            .catch(() => {
+              this.toggleFormState(`film-details__new-comment`, `input, textarea`);
+              this.shakeCommentForm();
             });
         }
       }

@@ -10,6 +10,7 @@ import {getFilmsToLoadAmount} from "../utils/helpers";
 import StatisticComponent from "../components/statistic";
 import API from "../api";
 import Movie from "../models/movie";
+import Comment from "../models/comment";
 
 export default class PageController {
   constructor(container, moviesModel) {
@@ -32,7 +33,7 @@ export default class PageController {
     this._renderedFilmsAmount = 0;
   }
 
-  showMainPage() {
+  showFilmsPage() {
     this._sortComponent.show();
     this._filmSectionComponent.show();
     this._statisticComponent.hide();
@@ -45,7 +46,7 @@ export default class PageController {
   }
 
   renderFilms(filmList, section, countFilms = true) {
-    for (const film of filmList) {
+    filmList.forEach((film) => {
       const filmController = new FilmController(section, this._moviesModel, this._onDataChange);
 
       if (section.className === `films`) {
@@ -57,7 +58,7 @@ export default class PageController {
       }
 
       filmController.render(film);
-    }
+    });
 
     if (countFilms) {
       this._renderedFilmsAmount = document.querySelectorAll(`.films-list .film-card`).length;
@@ -86,33 +87,45 @@ export default class PageController {
 
     if (filmList.length) {
       this.renderFilms(filmList.slice(0, Films.INITIAL_AMOUNT), filmSection);
-      this._renderTopRated(filmList);
-      this._renderMostCommented(filmList);
+
+      this._renderExtraSection(`Top Rated`);
+      this._renderExtraSection(`Most Commented`);
     } else {
       filmSection.replaceChild(this._noDataComponent.getElement(), filmSection.querySelector(`.films-list`));
     }
   }
 
-  _renderTopRated(filmList) {
-    const topRatedFilms = filmList.slice()
-      .sort((a, b) => b.rating - a.rating).slice(0, Films.EXTRA_FILM_AMOUNT);
+  _renderExtraSection(sectionName) {
+    let filmList;
+    let checkConditionCb;
 
-    if (topRatedFilms.some((film) => film.rating !== 0)) {
-      const extraSection = new ExtraSectionComponent(`Top Rated`);
+    if (sectionName === `Most Commented`) {
+      filmList = this._moviesModel.filmListDefault.slice()
+        .sort((a, b) => b.commentIds.length - a.commentIds.length).slice(0, Films.EXTRA_FILM_AMOUNT);
+      checkConditionCb = (film) => film.commentIds.length !== 0;
+    }
+
+    if (sectionName === `Top Rated`) {
+      filmList = this._moviesModel.filmListDefault.slice()
+        .sort((a, b) => b.rating - a.rating).slice(0, Films.EXTRA_FILM_AMOUNT);
+      checkConditionCb = (film) => film.rating !== 0;
+    }
+
+    if (filmList.some(checkConditionCb)) {
+      const extraSection = new ExtraSectionComponent(sectionName);
       render(this._filmSectionComponent.getElement(), extraSection);
-      this.renderFilms(topRatedFilms, extraSection.getElement(), false);
+      this.renderFilms(filmList, extraSection.getElement(), false);
     }
   }
 
-  _renderMostCommented(filmList) {
-    const mostCommentedFilms = filmList.slice()
-      .sort((a, b) => b.commentIds.length - a.commentIds.length).slice(0, Films.EXTRA_FILM_AMOUNT);
+  _removeExtraSection(sectionName) {
+    const sections = this._filmSectionComponent.getElement().querySelectorAll(`.films-list--extra`);
 
-    if (mostCommentedFilms.some((film) => film.commentIds.length !== 0)) {
-      const extraSection = new ExtraSectionComponent(`Most Commented`);
-      render(this._filmSectionComponent.getElement(), extraSection);
-      this.renderFilms(mostCommentedFilms, extraSection.getElement(), false);
-    }
+    sections.forEach((section) => {
+      if (section.querySelector(`.films-list__title`).textContent === sectionName) {
+        section.remove();
+      }
+    });
   }
 
   _renderShowMoreButton() {
@@ -151,18 +164,52 @@ export default class PageController {
     this.renderFilms(filmList.slice(0, filmAmount), this._filmSectionComponent.getElement());
   }
 
-  _onDataChange(filmController, oldData, newData) {
-    const comments = newData.comments;
+  _onDataChange(filmController, oldData, newData, isDeleted = false) {
+    if (newData instanceof Comment && !isDeleted) {
+      return this._api.createComment(oldData.id, newData)
+        .then((data) => {
+          const newFilm = Object.assign({}, oldData, {
+            comments: data.comments,
+            commentIds: data.comments.map((comment) => comment.id)
+          });
 
-    this._api.updateMovie(newData.id, newData)
-      .then((response) => Movie.parseMovie(response))
-      .then((data) => {
-        data.comments = comments;
-        this._moviesModel.onDataChange(() => {
-          filmController.updateComponents(data);
+          this._onRequestSuccess(newFilm, filmController);
+          this._removeExtraSection(`Most Commented`);
+          this._renderExtraSection(`Most Commented`);
         });
-        this._moviesModel.updateFilm(data.id, data);
-      });
+    }
+
+    if (newData instanceof Comment && isDeleted) {
+      return this._api.deleteComment(newData.id)
+        .then(() => {
+          const index = oldData.comments.findIndex((comment) => comment.id === newData.id);
+          oldData.comments.splice(index, 1);
+          oldData.commentIds.splice(oldData.commentIds.indexOf(newData.id), 1);
+
+          this._onRequestSuccess(oldData, filmController);
+          this._removeExtraSection(`Most Commented`);
+          this._renderExtraSection(`Most Commented`);
+        });
+    }
+
+    if (newData instanceof Movie) {
+      return this._api.updateMovie(newData.id, newData)
+        .then((response) => Movie.parseMovie(response))
+        .then((data) => {
+          data.comments = filmController.getComments();
+
+          this._onRequestSuccess(data, filmController);
+        });
+    }
+
+    return new Error(`newData instance is not specified`);
+  }
+
+  _onRequestSuccess(data, controller) {
+    this._moviesModel.onDataChange(() => {
+      controller.updateComponents(data);
+    });
+    this._moviesModel.updateFilm(data.id, data);
   }
 
   _onFilterChange() {
