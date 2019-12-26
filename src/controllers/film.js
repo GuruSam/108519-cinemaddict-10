@@ -5,6 +5,7 @@ import {remove, render} from "../utils/render";
 import API from "../api";
 import Comment from "../models/comment";
 import Movie from "../models/movie";
+import {Colors} from "../utils/const";
 
 
 export default class FilmController {
@@ -48,9 +49,9 @@ export default class FilmController {
     return this._film.comments;
   }
 
-  toggleCommentFormState() {
-    const form = this._filmDetails.getElement().querySelector(`.film-details__new-comment`);
-    form.querySelectorAll(`textarea, input`)
+  toggleFormState(formSelector, formElements) {
+    const form = this._filmDetails.getElement().querySelector(`.${formSelector}`);
+    form.querySelectorAll(formElements)
       .forEach((el) => {
         if (el.hasAttribute(`disabled`)) {
           el.removeAttribute(`disabled`);
@@ -60,10 +61,36 @@ export default class FilmController {
       });
   }
 
+  shakeCommentForm() {
+    const form = this._filmDetails.getElement().querySelector(`.film-details__new-comment`);
+    const onTextareaChange = (evt) => {
+      evt.target.style.border = ``;
+      form.querySelector(`textarea`).removeEventListener(`input`, onTextareaChange);
+    };
+
+    form.querySelector(`textarea`).style.border = Colors.BORDER_ERROR;
+
+    form.classList.add(`shake`);
+    form.addEventListener(`animationend`, () => form.classList.remove(`shake`));
+    form.querySelector(`textarea`).addEventListener(`input`, onTextareaChange);
+  }
+
+  shakeRatingForm(label) {
+    const form = this._filmDetails.getElement().querySelector(`.film-details__user-rating-score`);
+    const originalColor = label.style.backgroundColor;
+
+    label.style.backgroundColor = Colors.ERROR;
+    form.classList.add(`shake`);
+    form.addEventListener(`animationend`, () => {
+      form.classList.remove(`shake`);
+      label.style.backgroundColor = originalColor;
+    });
+  }
+
   _changeFilmData(updatedData) {
     const newData = Object.assign({}, this._film, updatedData);
 
-    this._onDataChange(this, this._film, new Movie(Movie.toRAW(newData)));
+    return this._onDataChange(this, this._film, new Movie(Movie.toRAW(newData)));
   }
 
   initFilmCardListeners() {
@@ -136,6 +163,25 @@ export default class FilmController {
       this._onDataChange(this, this._film, new Comment(comment.comment, comment.emotion, comment.id), true);
     });
 
+    this._filmDetails.onRatingClick((evt) => {
+      if (evt.target.classList.contains(`film-details__user-rating-label`)) {
+        evt.preventDefault();
+
+        const input = evt.currentTarget.querySelector(`#${evt.target.getAttribute(`for`)}`);
+
+        if (!input.hasAttribute(`disabled`)) {
+          evt.target.style.opacity = `0.5`;
+          this.toggleFormState(`film-details__user-rating-wrap`, `button, input`);
+          this._changeFilmData({personalRating: parseInt(input.value, 10)})
+            .catch(() => {
+              this.toggleFormState(`film-details__user-rating-wrap`, `button, input`);
+              this.shakeRatingForm(evt.target);
+              evt.target.style.opacity = ``;
+            });
+        }
+      }
+    });
+
     this._filmDetails.onKeydown((evt) => {
       if (isEscPressed(evt)) {
         this._filmDetails.hide();
@@ -145,8 +191,12 @@ export default class FilmController {
         const commentInput = this._filmDetails.getElement().querySelector(`.film-details__comment-input`);
 
         if (document.activeElement === commentInput && commentInput.value && this._filmDetails.emotion) {
-          this.toggleCommentFormState();
-          this._onDataChange(this, this._film, new Comment(commentInput.value, this._filmDetails.emotion));
+          this.toggleFormState(`film-details__new-comment`, `input, textarea`);
+          this._onDataChange(this, this._film, new Comment(commentInput.value, this._filmDetails.emotion))
+            .catch(() => {
+              this.toggleFormState(`film-details__new-comment`, `input, textarea`);
+              this.shakeCommentForm();
+            });
         }
       }
     });

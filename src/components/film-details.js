@@ -262,20 +262,14 @@ export default class FilmDetails extends SmartComponent {
     deleteButtons.forEach((it) => it.addEventListener(`click`, handler));
   }
 
-  onKeydown(handler) {
-    this._onKeydown = handler;
+  onRatingClick(handler) {
+    this._onRatingClick = handler;
+
+    this.getElement().querySelector(`.film-details__user-rating-score`).addEventListener(`click`, handler);
   }
 
-  toggleCommentFormState() {
-    const form = this.getElement().querySelector(`.film-details__new-comment`);
-    form.querySelectorAll(`textarea, input`)
-      .forEach((el) => {
-        if (el.hasAttribute(`disabled`)) {
-          el.removeAttribute(`disabled`);
-        } else {
-          el.setAttribute(`disabled`, ``);
-        }
-      });
+  onKeydown(handler) {
+    this._onKeydown = handler;
   }
 
   recoverListeners() {
@@ -288,6 +282,7 @@ export default class FilmDetails extends SmartComponent {
     element.querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._onAddToWatchlistClick);
     element.querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._onMarkAsWatchedClick);
     element.querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._onFavoriteClick);
+    element.querySelector(`.film-details__user-rating-score`).addEventListener(`click`, this._onRatingClick);
 
     const deleteButtons = element.querySelectorAll(`.film-details__comment-delete`);
 

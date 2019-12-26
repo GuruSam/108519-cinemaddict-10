@@ -166,50 +166,50 @@ export default class PageController {
 
   _onDataChange(filmController, oldData, newData, isDeleted = false) {
     if (newData instanceof Comment && !isDeleted) {
-      this._api.createComment(oldData.id, newData)
+      return this._api.createComment(oldData.id, newData)
         .then((data) => {
           const newFilm = Object.assign({}, oldData, {
             comments: data.comments,
             commentIds: data.comments.map((comment) => comment.id)
           });
 
-          this._moviesModel.onDataChange(() => {
-            filmController.updateComponents(newFilm);
-            this._removeExtraSection(`Most Commented`);
-            this._renderExtraSection(`Most Commented`);
-          });
-          this._moviesModel.updateFilm(newFilm.id, newFilm);
+          this._onRequestSuccess(newFilm, filmController);
+          this._removeExtraSection(`Most Commented`);
+          this._renderExtraSection(`Most Commented`);
         });
     }
 
     if (newData instanceof Comment && isDeleted) {
-      this._api.deleteComment(newData.id)
+      return this._api.deleteComment(newData.id)
         .then(() => {
           const index = oldData.comments.findIndex((comment) => comment.id === newData.id);
           oldData.comments.splice(index, 1);
           oldData.commentIds.splice(oldData.commentIds.indexOf(newData.id), 1);
 
-          this._moviesModel.onDataChange(() => {
-            filmController.updateComponents(oldData);
-            this._removeExtraSection(`Most Commented`);
-            this._renderExtraSection(`Most Commented`);
-          });
-          this._moviesModel.updateFilm(oldData.id, oldData);
+          this._onRequestSuccess(oldData, filmController);
+          this._removeExtraSection(`Most Commented`);
+          this._renderExtraSection(`Most Commented`);
         });
     }
 
     if (newData instanceof Movie) {
-      this._api.updateMovie(newData.id, newData)
+      return this._api.updateMovie(newData.id, newData)
         .then((response) => Movie.parseMovie(response))
         .then((data) => {
           data.comments = filmController.getComments();
 
-          this._moviesModel.onDataChange(() => {
-            filmController.updateComponents(data);
-          });
-          this._moviesModel.updateFilm(data.id, data);
+          this._onRequestSuccess(data, filmController);
         });
     }
+
+    return new Error(`newData instance is not specified`);
+  }
+
+  _onRequestSuccess(data, controller) {
+    this._moviesModel.onDataChange(() => {
+      controller.updateComponents(data);
+    });
+    this._moviesModel.updateFilm(data.id, data);
   }
 
   _onFilterChange() {
