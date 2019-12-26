@@ -6,13 +6,12 @@ export default class FilmDetails extends SmartComponent {
   constructor(film) {
     super();
     this._film = film;
-    this._comments = [];
     this._emojiLabel = null;
     this._subscribeOnEvents();
   }
 
   renderComments() {
-    const sortedComments = this._comments.slice()
+    const sortedComments = this._film.comments.slice()
       .sort((a, b) => a.date - b.date);
 
     return sortedComments.map((comment) =>
@@ -32,16 +31,14 @@ export default class FilmDetails extends SmartComponent {
   }
 
   getFilmControlsTemplate() {
-    const film = this._film;
-
     return `<section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${film.isInWatchlist ? `checked` : ``} disabled>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${this._film.isInWatchlist ? `checked` : ``} disabled>
           <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${film.isWatched ? `checked` : ``}>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${this._film.isWatched ? `checked` : ``}>
           <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${film.isFavorite ? `checked` : ``}>
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${this._film.isFavorite ? `checked` : ``}>
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
         </div>`;
@@ -100,16 +97,8 @@ export default class FilmDetails extends SmartComponent {
   }
 
   getCommentsWrapTemplate() {
-    const comments = this._comments;
-    let emojiLabel = this._emojiLabel;
-
-    if (emojiLabel) {
-      emojiLabel.style.width = `55px`;
-      emojiLabel.style.height = `55px`;
-    }
-
     return `<section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._film.comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
           ${this.renderComments()}
@@ -117,7 +106,6 @@ export default class FilmDetails extends SmartComponent {
 
           <div class="film-details__new-comment">
             <div for="add-emoji" class="film-details__add-emoji-label">
-            ${emojiLabel ? emojiLabel.outerHTML : ``}
             </div>
 
             <label class="film-details__comment-label">
@@ -125,22 +113,22 @@ export default class FilmDetails extends SmartComponent {
             </label>
 
             <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${this._emotion === `smile` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
               <label class="film-details__emoji-label" for="emoji-smile">
                 <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
               </label>
 
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${this._emotion === `sleeping` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
               <label class="film-details__emoji-label" for="emoji-sleeping">
                 <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
               </label>
 
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="puke" ${this._emotion === `puke` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="puke">
               <label class="film-details__emoji-label" for="emoji-gpuke">
                 <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
               </label>
 
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${this._emotion === `angry` ? `checked` : ``}>
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
               <label class="film-details__emoji-label" for="emoji-angry">
                 <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
               </label>
@@ -150,9 +138,7 @@ export default class FilmDetails extends SmartComponent {
   }
 
   getTemplate() {
-    const film = this._film;
-    const duration = formatTime(film.duration);
-    const genresMarkup = film.genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(`\n`);
+    const genresMarkup = this._film.genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(`\n`);
 
     return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -162,47 +148,47 @@ export default class FilmDetails extends SmartComponent {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./${film.poster}" alt="">
+            <img class="film-details__poster-img" src="./${this._film.poster}" alt="">
 
-            ${film.ageRating >= 18 ? `<p class="film-details__age">18+</p>` : ``}
+            ${this._film.ageRating >= 18 ? `<p class="film-details__age">18+</p>` : ``}
           </div>
 
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
-                <h3 class="film-details__title">${film.title}</h3>
-                <p class="film-details__title-original">Original: ${film.alternativeTitle}</p>
+                <h3 class="film-details__title">${this._film.title}</h3>
+                <p class="film-details__title-original">Original: ${this._film.alternativeTitle}</p>
               </div>
 
               <div class="film-details__rating">
-                <p class="film-details__total-rating">${film.rating}</p>
+                <p class="film-details__total-rating">${this._film.rating}</p>
               </div>
             </div>
 
             <table class="film-details__table">
               <tr class="film-details__row">
                 <td class="film-details__term">Director</td>
-                <td class="film-details__cell">${film.director}</td>
+                <td class="film-details__cell">${this._film.director}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">${film.writers}</td>
+                <td class="film-details__cell">${this._film.writers}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">${film.actors}</td>
+                <td class="film-details__cell">${this._film.actors}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${film.date} ${film.year}</td>
+                <td class="film-details__cell">${this._film.date} ${this._film.year}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${duration}</td>
+                <td class="film-details__cell">${formatTime(this._film.duration)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">${film.country}</td>
+                <td class="film-details__cell">${this._film.country}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
@@ -212,7 +198,7 @@ export default class FilmDetails extends SmartComponent {
             </table>
 
             <p class="film-details__film-description">
-                 ${film.description}
+                 ${this._film.description}
             </p>
           </div>
         </div>
@@ -229,11 +215,6 @@ export default class FilmDetails extends SmartComponent {
 
   set film(newFilm) {
     this._film = newFilm;
-    this._comments = newFilm.comments;
-  }
-
-  set comments(comments) {
-    this._comments = comments;
   }
 
   get emotion() {
@@ -306,16 +287,23 @@ export default class FilmDetails extends SmartComponent {
     const emojiLabels = this.getElement().querySelectorAll(`.film-details__emoji-label img`);
 
     emojiLabels.forEach((it) => it.addEventListener(`click`, (evt) => {
-      const label = evt.target.parentNode;
-      const emojiAttr = label.getAttribute(`for`);
-
-      this._emotion = label.parentNode.querySelector(`#${emojiAttr}`).value;
-      this._emojiLabel = evt.target;
-      this.rerender();
+      this._selectEmoji(evt.target);
     }));
 
     element.querySelector(`.film-details__close-btn`).addEventListener(`click`, () => {
       this.hide();
     });
+  }
+
+  _selectEmoji(selectedEmoji) {
+    const emoji = selectedEmoji.cloneNode();
+    const emojiLabel = selectedEmoji.parentNode;
+
+    emoji.style.width = `55px`;
+    emoji.style.height = `55px`;
+
+    this.getElement().querySelector(`.film-details__add-emoji-label`).innerHTML = ``;
+    this.getElement().querySelector(`.film-details__add-emoji-label`).appendChild(emoji);
+    this._emotion = emojiLabel.parentNode.querySelector(`#${emojiLabel.getAttribute(`for`)}`).value;
   }
 }

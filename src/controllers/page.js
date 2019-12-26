@@ -87,24 +87,45 @@ export default class PageController {
 
     if (filmList.length) {
       this.renderFilms(filmList.slice(0, Films.INITIAL_AMOUNT), filmSection);
-      const topRatedFilms = filmList.slice()
-        .sort((a, b) => b.rating - a.rating).slice(0, Films.EXTRA_FILM_AMOUNT);
-      const mostCommentedFilms = filmList.slice()
-        .sort((a, b) => b.commentIds.length - a.commentIds.length).slice(0, Films.EXTRA_FILM_AMOUNT);
 
-      this._renderExtraSection(`Top Rated`, topRatedFilms, (film) => film.rating !== 0);
-      this._renderExtraSection(`Most Commented`, mostCommentedFilms, (film) => film.commentIds.length !== 0);
+      this._renderExtraSection(`Top Rated`);
+      this._renderExtraSection(`Most Commented`);
     } else {
       filmSection.replaceChild(this._noDataComponent.getElement(), filmSection.querySelector(`.films-list`));
     }
   }
 
-  _renderExtraSection(sectionName, filmList, checkConditionCb) {
+  _renderExtraSection(sectionName) {
+    let filmList;
+    let checkConditionCb;
+
+    if (sectionName === `Most Commented`) {
+      filmList = this._moviesModel.filmListDefault.slice()
+        .sort((a, b) => b.commentIds.length - a.commentIds.length).slice(0, Films.EXTRA_FILM_AMOUNT);
+      checkConditionCb = (film) => film.commentIds.length !== 0;
+    }
+
+    if (sectionName === `Top Rated`) {
+      filmList = this._moviesModel.filmListDefault.slice()
+        .sort((a, b) => b.rating - a.rating).slice(0, Films.EXTRA_FILM_AMOUNT);
+      checkConditionCb = (film) => film.rating !== 0;
+    }
+
     if (filmList.some(checkConditionCb)) {
       const extraSection = new ExtraSectionComponent(sectionName);
       render(this._filmSectionComponent.getElement(), extraSection);
       this.renderFilms(filmList, extraSection.getElement(), false);
     }
+  }
+
+  _removeExtraSection(sectionName) {
+    const sections = this._filmSectionComponent.getElement().querySelectorAll(`.films-list--extra`);
+
+    sections.forEach((section) => {
+      if (section.querySelector(`.films-list__title`).textContent === sectionName) {
+        section.remove();
+      }
+    });
   }
 
   _renderShowMoreButton() {
@@ -152,8 +173,12 @@ export default class PageController {
             comments: data.comments,
             commentIds: data.comments.map((comment) => comment.id)
           });
-          this._moviesModel.setComments(oldData.id, data.comments);
-          filmController.updateComponents(newFilm);
+          this._moviesModel.onDataChange(() => {
+            filmController.updateComponents(newFilm);
+            this._removeExtraSection(`Most Commented`);
+            this._renderExtraSection(`Most Commented`);
+          });
+          this._moviesModel.updateFilm(newFilm.id, newFilm);
         });
     }
 
@@ -166,6 +191,8 @@ export default class PageController {
 
           this._moviesModel.onDataChange(() => {
             filmController.updateComponents(oldData);
+            this._removeExtraSection(`Most Commented`);
+            this._renderExtraSection(`Most Commented`);
           });
           this._moviesModel.updateFilm(oldData.id, oldData);
         });
