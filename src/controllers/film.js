@@ -10,7 +10,7 @@ import {Colors, Styles} from "../utils/const";
 
 export default class FilmController {
   constructor(container, moviesModel, onDataChange, id) {
-    this._id = id ? id : null;
+    this._id = id;
     this._container = container;
     this._onDataChange = onDataChange;
     this._filmCard = null;

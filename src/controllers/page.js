@@ -61,7 +61,7 @@ export default class PageController {
     });
 
     if (countFilms) {
-      this._renderedFilmsAmount = document.querySelectorAll(`.films-list .film-card`).length;
+      this._renderedFilmsAmount = this._filmControllers.length;
     }
 
     if (this._renderedFilmsAmount < this._moviesModel.getFilmList().length) {
