@@ -165,7 +165,6 @@ export default class PageController {
   }
 
   _onDataChange(filmController, oldData, newData, isDeleted = false) {
-
     if (newData instanceof Comment && !isDeleted) {
       this._api.createComment(oldData.id, newData)
         .then((data) => {
@@ -173,6 +172,7 @@ export default class PageController {
             comments: data.comments,
             commentIds: data.comments.map((comment) => comment.id)
           });
+
           this._moviesModel.onDataChange(() => {
             filmController.updateComponents(newFilm);
             this._removeExtraSection(`Most Commented`);

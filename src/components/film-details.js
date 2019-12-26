@@ -6,7 +6,6 @@ export default class FilmDetails extends SmartComponent {
   constructor(film) {
     super();
     this._film = film;
-    this._emojiLabel = null;
     this._subscribeOnEvents();
   }
 
@@ -267,6 +266,18 @@ export default class FilmDetails extends SmartComponent {
     this._onKeydown = handler;
   }
 
+  toggleCommentFormState() {
+    const form = this.getElement().querySelector(`.film-details__new-comment`);
+    form.querySelectorAll(`textarea, input`)
+      .forEach((el) => {
+        if (el.hasAttribute(`disabled`)) {
+          el.removeAttribute(`disabled`);
+        } else {
+          el.setAttribute(`disabled`, ``);
+        }
+      });
+  }
+
   recoverListeners() {
     this._subscribeOnEvents();
   }
@@ -278,7 +289,7 @@ export default class FilmDetails extends SmartComponent {
     element.querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._onMarkAsWatchedClick);
     element.querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._onFavoriteClick);
 
-    const deleteButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    const deleteButtons = element.querySelectorAll(`.film-details__comment-delete`);
 
     if (deleteButtons) {
       deleteButtons.forEach((it) => it.addEventListener(`click`, this._onCommentDeleteClick));

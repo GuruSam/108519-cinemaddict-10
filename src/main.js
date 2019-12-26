@@ -1,5 +1,5 @@
 import ProfileRatingComponent from "./components/profile-rating";
-import {checkForActiveState, getRandomNumber} from "./utils/helpers";
+import {checkForActiveState} from "./utils/helpers";
 import {render} from "./utils/render";
 import PageController from "./controllers/page";
 import MoviesModel from "./models/movies";
@@ -8,8 +8,6 @@ import API from "./api";
 
 const mainContainer = document.querySelector(`.main`);
 const headerContainer = document.querySelector(`.header`);
-
-render(headerContainer, new ProfileRatingComponent(getRandomNumber(0, 30)));
 
 const moviesModel = new MoviesModel();
 
@@ -38,5 +36,8 @@ api.getMovies()
   .then((data) => {
     moviesModel.filmList = data;
     menuController.updateComponent();
+    render(headerContainer, new ProfileRatingComponent(
+        moviesModel.filmListDefault.filter((film) => film.isWatched).length
+    ));
     page.render();
   });

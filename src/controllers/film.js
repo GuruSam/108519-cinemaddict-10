@@ -48,6 +48,18 @@ export default class FilmController {
     return this._film.comments;
   }
 
+  toggleCommentFormState() {
+    const form = this._filmDetails.getElement().querySelector(`.film-details__new-comment`);
+    form.querySelectorAll(`textarea, input`)
+      .forEach((el) => {
+        if (el.hasAttribute(`disabled`)) {
+          el.removeAttribute(`disabled`);
+        } else {
+          el.setAttribute(`disabled`, ``);
+        }
+      });
+  }
+
   _changeFilmData(updatedData) {
     const newData = Object.assign({}, this._film, updatedData);
 
@@ -133,6 +145,7 @@ export default class FilmController {
         const commentInput = this._filmDetails.getElement().querySelector(`.film-details__comment-input`);
 
         if (document.activeElement === commentInput && commentInput.value && this._filmDetails.emotion) {
+          this.toggleCommentFormState();
           this._onDataChange(this, this._film, new Comment(commentInput.value, this._filmDetails.emotion));
         }
       }
