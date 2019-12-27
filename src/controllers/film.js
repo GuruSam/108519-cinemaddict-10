@@ -54,6 +54,11 @@ export default class FilmController {
     return this._film.comments;
   }
 
+  removeFilmCard() {
+    remove(this._filmCard);
+    this._filmCard.removeElement();
+  }
+
   toggleFormState(formSelector, formElements) {
     const form = this._filmDetails.getElement().querySelector(`.${formSelector}`);
     form.querySelectorAll(formElements)
