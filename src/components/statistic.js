@@ -1,11 +1,14 @@
 import Component from "./component";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import {formatTime} from "../utils/helpers";
 
 export default class Statistic extends Component {
   constructor(moviesModel) {
     super();
     this._moviesModel = moviesModel;
+    this._filmList = this._moviesModel.filmListDefault;
+    this._genres = this._getGenresData(this._filmList);
     this._chart = this.renderChart();
   }
 
@@ -27,17 +30,23 @@ export default class Statistic extends Component {
     return genresData;
   }
 
+  updateComponent(data) {
+    this._filmList = data;
+    this._genres = this._getGenresData(this._filmList);
+    this._chart = this.renderChart();
+  }
+
   renderChart() {
+    this.destroyChart();
+
     const BAR_HEIGHT = 50;
     const BAR_COLOR = `#ffe800`;
     const LABEL_PADDING = 80;
     const LABEL_COLOR = `#fff`;
     const LABEL_FONT_SIZE = 15;
 
-    const filmList = this._moviesModel.filmListDefault;
     const ctx = this.getElement().querySelector(`.statistic__chart`);
-    const genresData = this._getGenresData(filmList);
-    const sortedGenresData = new Map([...genresData].sort((a, b) => b[1] - a[1]));
+    const sortedGenresData = new Map([...this._genres].sort((a, b) => b[1] - a[1]));
 
     const genresLabels = [...sortedGenresData.keys()];
     const genresValues = [...sortedGenresData.values()];
@@ -90,7 +99,17 @@ export default class Statistic extends Component {
     });
   }
 
+  destroyChart() {
+    if (this.getElement().querySelector(`.statistic__chart`).innerHTML) {
+      this.getElement().querySelector(`.statistic__chart`).innerHTML = ``;
+    }
+  }
+
   getTemplate() {
+    const totalDuration = this._filmList.map((film) => film.duration)
+      .reduce((acc, cur) => acc + cur, 0);
+    const sortedGenresData = new Map([...this._genres].sort((a, b) => b[1] - a[1]));
+
     return `<section class="statistic">
     <p class="statistic__rank">
       Your rank
@@ -120,15 +139,15 @@ export default class Statistic extends Component {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${this._filmList.length} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${formatTime(totalDuration, true)}</p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">Sci-Fi</p>
+        <p class="statistic__item-text">${sortedGenresData.keys().next().value}</p>
       </li>
     </ul>
 
@@ -137,5 +156,16 @@ export default class Statistic extends Component {
     </div>
 
   </section>`;
+  }
+
+  _subscribeOnEvents() {
+    this.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, (evt) => {
+      if (evt.target.classList.contains(`statistic__filters-label`)) {
+        switch (evt.target.getAttribute(`for`)) {
+          case `statistic-today`:
+            this.updateComponent();
+        }
+      }
+    });
   }
 }

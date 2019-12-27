@@ -26,11 +26,12 @@ export const getRandomArrayItem = (array) => array[getRandomNumber(0, array.leng
 
 export const getRandomBoolean = () => Math.random() > 0.5;
 
-export const formatTime = (time) => {
+export const formatTime = (time, forStats = false) => {
+  const spanWrap = (x) => `<span class="statistic__item-description">${x}</span>`;
   const hours = time / 60 ^ 0;
   const minutes = time % 60;
 
-  return `${hours}h ${minutes}m`;
+  return `${hours}${!forStats ? `h` : spanWrap(`h`)} ${minutes}${!forStats ? `m` : spanWrap(`m`)}`;
 };
 
 const formatDateNumber = (number) => number < 10 ? `0${number}` : number;
