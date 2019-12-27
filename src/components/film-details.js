@@ -1,4 +1,4 @@
-import {formatTime} from "../utils/helpers";
+import {formatTime, getCommentDate, getReleaseDate} from "../utils/helpers";
 import SmartComponent from "./smart-component";
 import {remove, render} from "../utils/render";
 
@@ -22,7 +22,7 @@ export default class FilmDetails extends SmartComponent {
           <p class="film-details__comment-text">${comment.comment}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${comment.author}</span>
-            <span class="film-details__comment-day">${comment.date}</span>
+            <span class="film-details__comment-day">${getCommentDate(comment.date)}</span>
             <button class="film-details__comment-delete">Delete</button>
           </p>
         </div>
@@ -179,7 +179,7 @@ export default class FilmDetails extends SmartComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${this._film.date} ${this._film.year}</td>
+                <td class="film-details__cell">${getReleaseDate(this._film.date)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>

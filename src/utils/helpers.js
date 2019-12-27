@@ -58,6 +58,18 @@ export const formatDate = (date) => {
   return result;
 };
 
+export const getYear = (date) => {
+  return moment(date).format(`YYYY`);
+};
+
+export const getCommentDate = (date) => {
+  return moment(date).format(`YYYY/MM/DD HH:mm`);
+};
+
+export const getReleaseDate = (date) => {
+  return moment(date).format(`DD MMMM YYYY`);
+};
+
 export const createElement = (template) => {
   const element = document.createElement(`div`);
   element.innerHTML = template;
