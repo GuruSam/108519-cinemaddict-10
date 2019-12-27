@@ -5,11 +5,12 @@ import {remove, render} from "../utils/render";
 import API from "../api";
 import Comment from "../models/comment";
 import Movie from "../models/movie";
-import {Colors} from "../utils/const";
+import {Colors, Styles} from "../utils/const";
 
 
 export default class FilmController {
-  constructor(container, moviesModel, onDataChange) {
+  constructor(container, moviesModel, onDataChange, id) {
+    this._id = id;
     this._container = container;
     this._onDataChange = onDataChange;
     this._filmCard = null;
@@ -29,6 +30,10 @@ export default class FilmController {
     this.initFilmDetailsListeners();
 
     render(this._container.querySelector(`.films-list__container`), this._filmCard);
+  }
+
+  get id() {
+    return this._id;
   }
 
   destroy() {
@@ -170,7 +175,7 @@ export default class FilmController {
         const input = evt.currentTarget.querySelector(`#${evt.target.getAttribute(`for`)}`);
 
         if (!input.hasAttribute(`disabled`)) {
-          evt.target.style.opacity = `0.5`;
+          evt.target.style.opacity = Styles.PENDING_OPACITY;
           this.toggleFormState(`film-details__user-rating-wrap`, `button, input`);
           this._changeFilmData({personalRating: parseInt(input.value, 10)})
             .catch(() => {

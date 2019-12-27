@@ -1,4 +1,4 @@
-import {formatTime} from "../utils/helpers";
+import {formatTime, getCommentDate, getReleaseDate} from "../utils/helpers";
 import SmartComponent from "./smart-component";
 import {remove, render} from "../utils/render";
 
@@ -22,7 +22,7 @@ export default class FilmDetails extends SmartComponent {
           <p class="film-details__comment-text">${comment.comment}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${comment.author}</span>
-            <span class="film-details__comment-day">${comment.date}</span>
+            <span class="film-details__comment-day">${getCommentDate(comment.date)}</span>
             <button class="film-details__comment-delete">Delete</button>
           </p>
         </div>
@@ -179,7 +179,7 @@ export default class FilmDetails extends SmartComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${this._film.date} ${this._film.year}</td>
+                <td class="film-details__cell">${getReleaseDate(this._film.date)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -258,8 +258,8 @@ export default class FilmDetails extends SmartComponent {
   onCommentDeleteClick(handler) {
     this._onCommentDeleteClick = handler;
 
-    const deleteButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
-    deleteButtons.forEach((it) => it.addEventListener(`click`, handler));
+    this.getElement().querySelectorAll(`.film-details__comment-delete`)
+      .forEach((it) => it.addEventListener(`click`, handler));
   }
 
   onRatingClick(handler) {
@@ -284,17 +284,13 @@ export default class FilmDetails extends SmartComponent {
     element.querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._onFavoriteClick);
     element.querySelector(`.film-details__user-rating-score`).addEventListener(`click`, this._onRatingClick);
 
-    const deleteButtons = element.querySelectorAll(`.film-details__comment-delete`);
+    element.querySelectorAll(`.film-details__comment-delete`)
+      .forEach((it) => it.addEventListener(`click`, this._onCommentDeleteClick));
 
-    if (deleteButtons) {
-      deleteButtons.forEach((it) => it.addEventListener(`click`, this._onCommentDeleteClick));
-    }
-
-    const emojiLabels = this.getElement().querySelectorAll(`.film-details__emoji-label img`);
-
-    emojiLabels.forEach((it) => it.addEventListener(`click`, (evt) => {
-      this._selectEmoji(evt.target);
-    }));
+    element.querySelectorAll(`.film-details__emoji-label img`)
+      .forEach((it) => it.addEventListener(`click`, (evt) => {
+        this._selectEmoji(evt.target);
+      }));
 
     element.querySelector(`.film-details__close-btn`).addEventListener(`click`, () => {
       this.hide();

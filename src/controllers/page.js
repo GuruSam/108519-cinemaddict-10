@@ -4,7 +4,7 @@ import FilmSectionComponent from "../components/film-section";
 import ExtraSectionComponent from "../components/extra-film-section";
 import ShowMoreButtonComponent from "../components/show-more-btn";
 import {render, remove} from "../utils/render";
-import {Films} from "../utils/const";
+import {Films, FilterTypes} from "../utils/const";
 import FilmController from "./film";
 import {getFilmsToLoadAmount} from "../utils/helpers";
 import StatisticComponent from "../components/statistic";
@@ -47,7 +47,7 @@ export default class PageController {
 
   renderFilms(filmList, section, countFilms = true) {
     filmList.forEach((film) => {
-      const filmController = new FilmController(section, this._moviesModel, this._onDataChange);
+      const filmController = new FilmController(section, this._moviesModel, this._onDataChange, film.id);
 
       if (section.className === `films`) {
         this._filmControllers.push(filmController);
@@ -61,7 +61,7 @@ export default class PageController {
     });
 
     if (countFilms) {
-      this._renderedFilmsAmount = document.querySelectorAll(`.films-list .film-card`).length;
+      this._renderedFilmsAmount = this._filmControllers.length;
     }
 
     if (this._renderedFilmsAmount < this._moviesModel.getFilmList().length) {
@@ -96,6 +96,7 @@ export default class PageController {
   }
 
   _renderExtraSection(sectionName) {
+    this._removeExtraSection(sectionName);
     let filmList;
     let checkConditionCb;
 
@@ -158,13 +159,14 @@ export default class PageController {
   _updateFilms() {
     this._removeFilms();
 
-    const filmList = this._moviesModel.getFilmList();
     const filmAmount = getFilmsToLoadAmount(this._renderedFilmsAmount);
-
-    this.renderFilms(filmList.slice(0, filmAmount), this._filmSectionComponent.getElement());
+    this.renderFilms(this._moviesModel.getFilmList().slice(0, filmAmount), this._filmSectionComponent.getElement());
   }
 
   _onDataChange(filmController, oldData, newData, isDeleted = false) {
+    const controllers = this._filmControllers.concat(this._extraFilmControllers)
+      .filter((it) => it.id === filmController.id);
+
     if (newData instanceof Comment && !isDeleted) {
       return this._api.createComment(oldData.id, newData)
         .then((data) => {
@@ -173,8 +175,7 @@ export default class PageController {
             commentIds: data.comments.map((comment) => comment.id)
           });
 
-          this._onRequestSuccess(newFilm, filmController);
-          this._removeExtraSection(`Most Commented`);
+          this._onRequestSuccess(newFilm, controllers);
           this._renderExtraSection(`Most Commented`);
         });
     }
@@ -186,8 +187,7 @@ export default class PageController {
           oldData.comments.splice(index, 1);
           oldData.commentIds.splice(oldData.commentIds.indexOf(newData.id), 1);
 
-          this._onRequestSuccess(oldData, filmController);
-          this._removeExtraSection(`Most Commented`);
+          this._onRequestSuccess(oldData, controllers);
           this._renderExtraSection(`Most Commented`);
         });
     }
@@ -198,16 +198,19 @@ export default class PageController {
         .then((data) => {
           data.comments = filmController.getComments();
 
-          this._onRequestSuccess(data, filmController);
+          this._onRequestSuccess(data, controllers);
+          if (this._moviesModel.filterType !== FilterTypes.DEFAULT) {
+            this._updateFilms();
+          }
         });
     }
 
-    return new Error(`newData instance is not specified`);
+    return null;
   }
 
-  _onRequestSuccess(data, controller) {
+  _onRequestSuccess(data, controllers) {
     this._moviesModel.onDataChange(() => {
-      controller.updateComponents(data);
+      controllers.forEach((it) => it.updateComponents(data));
     });
     this._moviesModel.updateFilm(data.id, data);
   }

@@ -1,4 +1,4 @@
-import {formatTime} from "../utils/helpers";
+import {formatTime, getYear} from "../utils/helpers";
 import SmartComponent from "./smart-component";
 
 export default class FilmCard extends SmartComponent {
@@ -18,21 +18,19 @@ export default class FilmCard extends SmartComponent {
   }
 
   getTemplate() {
-    const film = this._film;
-    const duration = formatTime(film.duration);
-    const description = film.description.length > 139 ? film.description.substring(0, 139) + `...` : film.description;
+    const description = this._film.description.length > 139 ? this._film.description.substring(0, 139) + `...` : this._film.description;
 
     return `<article class="film-card">
-    <h3 class="film-card__title">${film.title}</h3>
-    <p class="film-card__rating">${film.rating}</p>
+    <h3 class="film-card__title">${this._film.title}</h3>
+    <p class="film-card__rating">${this._film.rating}</p>
     <p class="film-card__info">
-      <span class="film-card__year">${film.year}</span>
-      <span class="film-card__duration">${duration}</span>
-      <span class="film-card__genre">${film.genres}</span>
+      <span class="film-card__year">${getYear(this._film.date)}</span>
+      <span class="film-card__duration">${formatTime(this._film.duration)}</span>
+      <span class="film-card__genre">${this._film.genres.join(`, `)}</span>
     </p>
-    <img src="./${film.poster}" alt="" class="film-card__poster">
+    <img src="./${this._film.poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${description}</p>
-    <a class="film-card__comments">${film.commentIds.length} comments</a>
+    <a class="film-card__comments">${this._film.commentIds.length} comments</a>
     ${this.getCardControlsTemplate()}
   </article>`;
   }
