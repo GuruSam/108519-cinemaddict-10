@@ -1,6 +1,7 @@
 import {formatTime, getCommentDate, getReleaseDate} from "../utils/helpers";
 import SmartComponent from "./smart-component";
 import {remove, render} from "../utils/render";
+import moment from "moment";
 
 export default class FilmDetails extends SmartComponent {
   constructor(film) {
@@ -11,7 +12,7 @@ export default class FilmDetails extends SmartComponent {
 
   renderComments() {
     const sortedComments = this._film.comments.slice()
-      .sort((a, b) => a.date - b.date);
+      .sort((a, b) => moment(a.date) - moment(b.date));
 
     return sortedComments.map((comment) =>
       `<li class="film-details__comment" data-id="${comment.id}">

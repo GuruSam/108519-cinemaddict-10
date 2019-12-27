@@ -1,7 +1,7 @@
 import Component from "./component";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import {formatTime} from "../utils/helpers";
+import {formatTime, getUserRank} from "../utils/helpers";
 import moment from "moment";
 
 export default class Statistic extends Component {
@@ -114,7 +114,7 @@ export default class Statistic extends Component {
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">Sci-Fighter</span>
+      <span class="statistic__rank-label">${getUserRank(this._moviesModel.filmListDefault.filter((film) => film.isWatched).length)}</span>
     </p>
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
