@@ -269,6 +269,12 @@ export default class FilmDetails extends SmartComponent {
     this.getElement().querySelector(`.film-details__user-rating-score`).addEventListener(`click`, handler);
   }
 
+  onUndoClick(handler) {
+    this._onUndoClick = handler;
+
+    this.getElement().querySelector(`.film-details__watched-reset`).addEventListener(`click`, handler);
+  }
+
   onKeydown(handler) {
     this._onKeydown = handler;
   }
@@ -284,6 +290,7 @@ export default class FilmDetails extends SmartComponent {
     element.querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._onMarkAsWatchedClick);
     element.querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._onFavoriteClick);
     element.querySelector(`.film-details__user-rating-score`).addEventListener(`click`, this._onRatingClick);
+    element.querySelector(`.film-details__watched-reset`).addEventListener(`click`, this._onUndoClick);
 
     element.querySelectorAll(`.film-details__comment-delete`)
       .forEach((it) => it.addEventListener(`click`, this._onCommentDeleteClick));

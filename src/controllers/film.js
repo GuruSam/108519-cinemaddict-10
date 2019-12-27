@@ -54,7 +54,7 @@ export default class FilmController {
     return this._film.comments;
   }
 
-  removeFilmCard() {
+  hideFilmCard() {
     remove(this._filmCard);
     this._filmCard.removeElement();
   }
@@ -126,21 +126,34 @@ export default class FilmController {
       evt.preventDefault();
       evt.target.setAttribute(`disabled`, `disabled`);
 
-      this._changeFilmData({isInWatchlist: !this._film.isInWatchlist});
+      this._changeFilmData({isInWatchlist: !this._film.isInWatchlist})
+        .catch(() => {
+          evt.target.removeAttribute(`disabled`);
+        });
     });
 
     this._filmCard.onMarkAsWatchedClick((evt) => {
       evt.preventDefault();
       evt.target.setAttribute(`disabled`, `disabled`);
+      const changedData = {
+        isWatched: !this._film.isWatched,
+        personalRating: 0
+      };
 
-      this._changeFilmData({isWatched: !this._film.isWatched});
+      this._changeFilmData(changedData)
+        .catch(() => {
+          evt.target.removeAttribute(`disabled`);
+        });
     });
 
     this._filmCard.onFavoriteClick((evt) => {
       evt.preventDefault();
       evt.target.setAttribute(`disabled`, `disabled`);
 
-      this._changeFilmData({isFavorite: !this._film.isFavorite});
+      this._changeFilmData({isFavorite: !this._film.isFavorite})
+        .catch(() => {
+          evt.target.removeAttribute(`disabled`);
+        });
     });
   }
 
@@ -153,8 +166,16 @@ export default class FilmController {
 
     this._filmDetails.onMarkAsWatchedClick((evt) => {
       evt.preventDefault();
+      const changedData = {
+        isWatched: !this._film.isWatched,
+        personalRating: 0
+      };
 
-      this._changeFilmData({isWatched: !this._film.isWatched});
+      this.toggleFormState(`film-details__user-rating-wrap`, `button, input`);
+      this._changeFilmData(changedData)
+        .catch(() => {
+          this.toggleFormState(`film-details__user-rating-wrap`, `button, input`);
+        });
     });
 
     this._filmDetails.onFavoriteClick((evt) => {
@@ -165,12 +186,18 @@ export default class FilmController {
 
     this._filmDetails.onCommentDeleteClick((evt) => {
       evt.preventDefault();
+      evt.target.innerHTML = `Deleting...`;
+      evt.target.setAttribute(`disabled`, `disabled`);
 
       const deletedCommentId = evt.target.closest(`.film-details__comment`).dataset.id;
       const index = this._film.comments.findIndex((it) => it.id === deletedCommentId);
 
       const comment = this._film.comments[index];
-      this._onDataChange(this, this._film, new Comment(comment.comment, comment.emotion, comment.id), true);
+      this._onDataChange(this, this._film, new Comment(comment.comment, comment.emotion, comment.id), true)
+        .catch(() => {
+          evt.target.innerHTML = `Delete`;
+          evt.target.removeAttribute(`disabled`);
+        });
     });
 
     this._filmDetails.onRatingClick((evt) => {
@@ -190,6 +217,10 @@ export default class FilmController {
             });
         }
       }
+    });
+
+    this._filmDetails.onUndoClick(() => {
+      this._changeFilmData({personalRating: 0});
     });
 
     this._filmDetails.onKeydown((evt) => {

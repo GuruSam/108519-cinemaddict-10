@@ -57,6 +57,10 @@ export default class Statistic extends Component {
 
     ctx.height = BAR_HEIGHT * genresLabels.length;
 
+    if (!genresLabels.length) {
+      return false;
+    }
+
     return new Chart(ctx, {
       type: `horizontalBar`,
       data: {
@@ -155,11 +159,11 @@ export default class Statistic extends Component {
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${formatTime(totalDuration, true)}</p>
+        <p class="statistic__item-text">${totalDuration ? formatTime(totalDuration, true) : `0`}</p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">${sortedGenresData.keys().next().value}</p>
+        <p class="statistic__item-text">${sortedGenresData ? sortedGenresData.keys().next().value : `-`}</p>
       </li>
     </ul>`;
   }
