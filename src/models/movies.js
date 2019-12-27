@@ -24,6 +24,10 @@ export default class Movies {
     return this._activeSortType;
   }
 
+  get filterType() {
+    return this._activeFilterType;
+  }
+
   set sortType(type) {
     this._activeSortType = type;
   }

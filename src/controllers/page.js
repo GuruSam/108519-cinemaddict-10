@@ -4,7 +4,7 @@ import FilmSectionComponent from "../components/film-section";
 import ExtraSectionComponent from "../components/extra-film-section";
 import ShowMoreButtonComponent from "../components/show-more-btn";
 import {render, remove} from "../utils/render";
-import {Films} from "../utils/const";
+import {Films, FilterTypes} from "../utils/const";
 import FilmController from "./film";
 import {getFilmsToLoadAmount} from "../utils/helpers";
 import StatisticComponent from "../components/statistic";
@@ -199,6 +199,9 @@ export default class PageController {
           data.comments = filmController.getComments();
 
           this._onRequestSuccess(data, controllers);
+          if (this._moviesModel.filterType !== FilterTypes.DEFAULT) {
+            this._updateFilms();
+          }
         });
     }
   }
