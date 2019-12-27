@@ -2,6 +2,7 @@ import Component from "./component";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import {formatTime} from "../utils/helpers";
+import moment from "moment";
 
 export default class Statistic extends Component {
   constructor(moviesModel) {
@@ -10,6 +11,8 @@ export default class Statistic extends Component {
     this._filmList = this._moviesModel.filmListDefault;
     this._genres = this._getGenresData(this._filmList);
     this._chart = this.renderChart();
+
+    this._subscribeOnEvents();
   }
 
   _getGenresData(filmList) {
@@ -33,6 +36,7 @@ export default class Statistic extends Component {
   updateComponent(data) {
     this._filmList = data;
     this._genres = this._getGenresData(this._filmList);
+    this.rerender();
     this._chart = this.renderChart();
   }
 
@@ -106,10 +110,6 @@ export default class Statistic extends Component {
   }
 
   getTemplate() {
-    const totalDuration = this._filmList.map((film) => film.duration)
-      .reduce((acc, cur) => acc + cur, 0);
-    const sortedGenresData = new Map([...this._genres].sort((a, b) => b[1] - a[1]));
-
     return `<section class="statistic">
     <p class="statistic__rank">
       Your rank
@@ -136,7 +136,19 @@ export default class Statistic extends Component {
       <label for="statistic-year" class="statistic__filters-label">Year</label>
     </form>
 
-    <ul class="statistic__text-list">
+    ${this.getStatisticTextTemplate()}
+
+    ${this.getStatisticChartTemplate()}
+
+  </section>`;
+  }
+
+  getStatisticTextTemplate() {
+    const totalDuration = this._filmList.map((film) => film.duration)
+      .reduce((acc, cur) => acc + cur, 0);
+    const sortedGenresData = new Map([...this._genres].sort((a, b) => b[1] - a[1]));
+
+    return `<ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
         <p class="statistic__item-text">${this._filmList.length} <span class="statistic__item-description">movies</span></p>
@@ -149,21 +161,45 @@ export default class Statistic extends Component {
         <h4 class="statistic__item-title">Top genre</h4>
         <p class="statistic__item-text">${sortedGenresData.keys().next().value}</p>
       </li>
-    </ul>
+    </ul>`;
+  }
 
-    <div class="statistic__chart-wrap">
+  getStatisticChartTemplate() {
+    return `<div class="statistic__chart-wrap">
       <canvas class="statistic__chart" width="1000"></canvas>
-    </div>
+    </div>`;
+  }
 
-  </section>`;
+  rerender() {
+    this.getElement().querySelector(`.statistic__text-list`).outerHTML = this.getStatisticTextTemplate();
+    this.getElement().querySelector(`.statistic__chart-wrap`).outerHTML = this.getStatisticChartTemplate();
   }
 
   _subscribeOnEvents() {
     this.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, (evt) => {
       if (evt.target.classList.contains(`statistic__filters-label`)) {
+        let data;
+
         switch (evt.target.getAttribute(`for`)) {
+          case `statistic-all-time`:
+            this.updateComponent(this._moviesModel.filmListDefault);
+            break;
           case `statistic-today`:
-            this.updateComponent();
+            data = this._moviesModel.filmListDefault.filter((film) => moment(film.watchingDate).isSame(moment(), `day`));
+            this.updateComponent(data);
+            break;
+          case `statistic-week`:
+            data = this._moviesModel.filmListDefault.filter((film) => moment(film.watchingDate) >= moment().subtract(7, `days`));
+            this.updateComponent(data);
+            break;
+          case `statistic-month`:
+            data = this._moviesModel.filmListDefault.filter((film) => moment(film.watchingDate) >= moment().subtract(1, `months`));
+            this.updateComponent(data);
+            break;
+          case `statistic-year`:
+            data = this._moviesModel.filmListDefault.filter((film) => moment(film.watchingDate) >= moment().subtract(1, `years`));
+            this.updateComponent(data);
+            break;
         }
       }
     });
