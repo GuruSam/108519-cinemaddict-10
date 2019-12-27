@@ -33,5 +33,8 @@ export const FilterTypes = {
 export const Colors = {
   BORDER_ERROR: `2px solid #cc0000`,
   ERROR: `#cc0000`,
-  PENDING: `#808080`
+};
+
+export const Styles = {
+  PENDING_OPACITY: `0.5`
 };
