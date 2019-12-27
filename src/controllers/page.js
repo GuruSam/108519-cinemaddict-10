@@ -204,6 +204,8 @@ export default class PageController {
           }
         });
     }
+
+    return null;
   }
 
   _onRequestSuccess(data, controllers) {

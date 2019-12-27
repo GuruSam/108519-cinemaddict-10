@@ -35,7 +35,6 @@ const page = new PageController(mainContainer, moviesModel);
 api.getMovies()
   .then((data) => {
     moviesModel.filmList = data;
-    console.log(moviesModel.filmListDefault);
     menuController.updateComponent();
     render(headerContainer, new ProfileRatingComponent(
         moviesModel.filmListDefault.filter((film) => film.isWatched).length
