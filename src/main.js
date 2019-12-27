@@ -1,10 +1,11 @@
 import ProfileRatingComponent from "./components/profile-rating";
 import {checkForActiveState} from "./utils/helpers";
-import {render} from "./utils/render";
+import {remove, render} from "./utils/render";
 import PageController from "./controllers/page";
 import MoviesModel from "./models/movies";
 import MenuController from "./controllers/menu";
 import API from "./api";
+import LoadingComponent from "./components/loading";
 
 const mainContainer = document.querySelector(`.main`);
 const headerContainer = document.querySelector(`.header`);
@@ -31,6 +32,8 @@ menuComponent.onMenuItemClick((evt) => {
 
 const api = new API();
 const page = new PageController(mainContainer, moviesModel);
+const loadingComponent = new LoadingComponent();
+render(mainContainer, loadingComponent);
 
 api.getMovies()
   .then((data) => {
@@ -39,5 +42,6 @@ api.getMovies()
     render(headerContainer, new ProfileRatingComponent(
         moviesModel.filmListDefault.filter((film) => film.isWatched).length
     ));
+    remove(loadingComponent);
     page.render();
   });
