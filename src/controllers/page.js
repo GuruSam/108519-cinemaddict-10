@@ -200,7 +200,7 @@ export default class PageController {
 
           this._onRequestSuccess(data, controllers);
           if (this._moviesModel.filterType !== FilterTypes.DEFAULT) {
-            filmController.hideFilmCard();
+            this._updateFilms();
           }
         });
     }
