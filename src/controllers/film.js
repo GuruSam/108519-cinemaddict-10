@@ -2,14 +2,13 @@ import FilmCardComponent from "../components/film-card";
 import FilmDetailsComponent from "../components/film-details";
 import {isEscPressed, isSubmitPressed} from "../utils/helpers";
 import {remove, render} from "../utils/render";
-import API from "../api";
 import Comment from "../models/comment";
 import Movie from "../models/movie";
 import {Colors, Styles} from "../utils/const";
 
 
 export default class FilmController {
-  constructor(container, moviesModel, onDataChange, id) {
+  constructor(container, moviesModel, onDataChange, id, provider) {
     this._id = id;
     this._container = container;
     this._onDataChange = onDataChange;
@@ -18,7 +17,7 @@ export default class FilmController {
     this._film = null;
 
     this._moviesModel = moviesModel;
-    this._api = new API();
+    this._api = provider;
   }
 
   render(film) {
@@ -108,10 +107,12 @@ export default class FilmController {
         if (!this._film.comments.length) {
           this._api.getComments(this._film.id)
             .then((comments) => {
-              this._film.comments = comments;
-              this._moviesModel.setComments(this._film.id, comments);
-              this._filmDetails.film = this._film;
-              this._filmDetails.rerender();
+              if (comments) {
+                this._film.comments = comments;
+                this._moviesModel.setComments(this._film.id, comments);
+                this._filmDetails.film = this._film;
+                this._filmDetails.rerender();
+              }
             });
         }
       }
