@@ -115,3 +115,8 @@ export const getFilmsToLoadAmount = (renderedAmount) => {
 
   return Films.INITIAL_AMOUNT;
 };
+
+export const setDocumentTitle = (title) => {
+  const currentTitle = document.title.indexOf(`[`) ? document.title.split(`[`)[0] : document.title;
+  document.title = `${currentTitle} ${title}`;
+};

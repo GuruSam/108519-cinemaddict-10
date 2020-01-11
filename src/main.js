@@ -1,5 +1,5 @@
 import ProfileRatingComponent from "./components/profile-rating";
-import {checkForActiveState} from "./utils/helpers";
+import {checkForActiveState, setDocumentTitle} from "./utils/helpers";
 import {remove, render} from "./utils/render";
 import PageController from "./controllers/page";
 import MoviesModel from "./models/movies";
@@ -10,18 +10,17 @@ import Provider from "./api/provider";
 import Store from "./api/store";
 
 window.addEventListener(`load`, () => {
-  navigator.serviceWorker.register(`/sw.js`)
-    .then(() => {
-      document.title += ` [SW]`;
-    })
-    .catch(() => {
-      document.title += ` [no SW]`;
-    });
+  navigator.serviceWorker.register(`/sw.js`);
 });
 
-// window.addEventListener(`offline`, () => {
-//   document.title += ` [offline]`;
-// });
+window.addEventListener(`offline`, () => {
+  setDocumentTitle(`[offline]`);
+});
+
+window.addEventListener(`online`, () => {
+  setDocumentTitle(``);
+  providerWithAPI.sync();
+});
 
 const mainContainer = document.querySelector(`.main`);
 const headerContainer = document.querySelector(`.header`);

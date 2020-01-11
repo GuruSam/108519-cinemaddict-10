@@ -180,7 +180,7 @@ export default class PageController {
     }
 
     if (newData instanceof Comment && isDeleted) {
-      return this._api.deleteComment(newData.id)
+      return this._api.deleteComment(newData.id, oldData.id)
         .then(() => {
           const index = oldData.comments.findIndex((comment) => comment.id === newData.id);
           oldData.comments.splice(index, 1);

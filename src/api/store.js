@@ -12,6 +12,11 @@ export default class Store {
     }
   }
 
+  getItem(id) {
+    return Object.values(this.getData())
+      .filter((it) => it.id === id);
+  }
+
   setItem(key, value) {
     const store = this.getData();
 
