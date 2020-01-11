@@ -45,6 +45,7 @@ export default class Provider {
         });
     }
     this._isSync = false;
+    return null;
   }
 
   createComment(id, data) {
