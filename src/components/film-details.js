@@ -228,6 +228,12 @@ export default class FilmDetails extends SmartComponent {
   }
 
   show(container) {
+    const openedPopups = container.querySelectorAll(`.film-details`);
+
+    if (openedPopups) {
+      openedPopups.forEach((popup) => popup.remove());
+    }
+
     render(container, this);
     document.addEventListener(`keydown`, this._onKeydown);
   }
