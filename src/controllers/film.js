@@ -227,7 +227,7 @@ export default class FilmController {
       if (isSubmitPressed(evt)) {
         const commentInput = this._filmDetails.getElement().querySelector(`.film-details__comment-input`);
 
-        if (document.activeElement === commentInput && commentInput.value && this._filmDetails.emotion) {
+        if (document.activeElement === commentInput) {
           this.toggleFormState(`film-details__new-comment`, `input, textarea`);
           this._onDataChange(this, this._film, new Comment(commentInput.value, this._filmDetails.emotion))
             .catch(() => {

@@ -167,6 +167,10 @@ export default class PageController {
       .filter((it) => it.id === filmController.id);
 
     if (newData instanceof Comment && !isDeleted) {
+      if (!newData.comment || !newData.emotion) {
+        return Promise.reject(`All comment fields must be filled.`);
+      }
+
       return this._api.createComment(oldData.id, newData)
         .then((data) => {
           const newFilm = Object.assign({}, oldData, {
