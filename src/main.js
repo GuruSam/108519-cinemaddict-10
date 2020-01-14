@@ -48,8 +48,10 @@ menuComponent.onMenuItemClick((evt) => {
 const api = new API();
 const store = new Store(window.localStorage);
 const providerWithAPI = new Provider(api, store);
+
 const page = new PageController(mainContainer, moviesModel, providerWithAPI);
 const loadingComponent = new LoadingComponent();
+
 render(mainContainer, loadingComponent);
 
 providerWithAPI.getMovies()

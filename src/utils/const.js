@@ -5,6 +5,22 @@ export const Films = {
   EXTRA_FILM_AMOUNT: 2
 };
 
+export const FilterTypes = {
+  DEFAULT: `all`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`
+};
+
+export const Colors = {
+  BORDER_ERROR: `2px solid #cc0000`,
+  ERROR: `#cc0000`,
+};
+
+export const Styles = {
+  PENDING_OPACITY: `0.5`
+};
+
 export const userRanks = [
   {
     title: `Novice`,
@@ -22,19 +38,3 @@ export const userRanks = [
     max: 30
   }
 ];
-
-export const FilterTypes = {
-  DEFAULT: `all`,
-  WATCHLIST: `watchlist`,
-  HISTORY: `history`,
-  FAVORITES: `favorites`
-};
-
-export const Colors = {
-  BORDER_ERROR: `2px solid #cc0000`,
-  ERROR: `#cc0000`,
-};
-
-export const Styles = {
-  PENDING_OPACITY: `0.5`
-};
