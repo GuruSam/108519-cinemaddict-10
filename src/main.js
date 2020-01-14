@@ -4,7 +4,7 @@ import {remove, render} from "./utils/render";
 import PageController from "./controllers/page";
 import MoviesModel from "./models/movies";
 import MenuController from "./controllers/menu";
-import API from "./api/api";
+import Api from "./api/api";
 import LoadingComponent from "./components/loading";
 import Provider from "./api/provider";
 import Store from "./api/store";
@@ -45,7 +45,7 @@ menuComponent.onMenuItemClick((evt) => {
   }
 });
 
-const api = new API();
+const api = new Api();
 const store = new Store(window.localStorage);
 const providerWithAPI = new Provider(api, store);
 

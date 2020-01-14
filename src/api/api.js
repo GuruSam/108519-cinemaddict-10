@@ -10,7 +10,7 @@ const Method = {
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
-export default class API {
+export default class Api {
   checkStatus(response) {
     if (response.status >= 200 && response.status < 300) {
       return response;
