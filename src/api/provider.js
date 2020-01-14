@@ -39,10 +39,7 @@ export default class Provider {
     this._store.setItem(id, Movie.toRAW(newData));
 
     if (this._isOnline()) {
-      return this._api.updateMovie(id, newData)
-        .then((response) => {
-          return response;
-        });
+      return this._api.updateMovie(id, newData);
     }
     this._isSync = false;
     return null;
