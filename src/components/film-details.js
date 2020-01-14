@@ -1,6 +1,7 @@
 import {formatTime, getCommentDate, getReleaseDate} from "../utils/helpers";
 import SmartComponent from "./smart-component";
 import {remove, render} from "../utils/render";
+import LoadingRingComponent from "./loading-ring";
 import moment from "moment";
 
 export default class FilmDetails extends SmartComponent {
@@ -97,8 +98,12 @@ export default class FilmDetails extends SmartComponent {
   }
 
   getCommentsWrapTemplate() {
-    return `<section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._film.comments.length}</span></h3>
+    const loadingRing = new LoadingRingComponent();
+    loadingRing.width = `100px`;
+    loadingRing.height = `100px`;
+
+    return !this._film.comments.length ? loadingRing.getElement().outerHTML :
+      `<h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._film.comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
           ${this.renderComments()}
@@ -133,8 +138,7 @@ export default class FilmDetails extends SmartComponent {
                 <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
               </label>
             </div>
-          </div>
-        </section>`;
+          </div>`;
   }
 
   getTemplate() {
@@ -207,7 +211,9 @@ export default class FilmDetails extends SmartComponent {
         ${this.getMiddleContainerTemplate()}
 
       <div class="form-details__bottom-container">
-        ${this.getCommentsWrapTemplate()}
+         <section class="film-details__comments-wrap">
+            ${this.getCommentsWrapTemplate()}
+         </section>
       </div>
     </form>
   </section>`;
@@ -236,7 +242,7 @@ export default class FilmDetails extends SmartComponent {
   rerender() {
     this.getElement().querySelector(`.film-details__controls`).outerHTML = this.getFilmControlsTemplate();
     this.getElement().querySelector(`.form-details__middle-container`).outerHTML = this.getMiddleContainerTemplate();
-    this.getElement().querySelector(`.film-details__comments-wrap`).outerHTML = this.getCommentsWrapTemplate();
+    this.getElement().querySelector(`.film-details__comments-wrap`).innerHTML = this.getCommentsWrapTemplate();
 
     this.recoverListeners();
   }
