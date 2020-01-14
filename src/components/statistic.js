@@ -8,7 +8,7 @@ export default class Statistic extends Component {
   constructor(moviesModel) {
     super();
     this._moviesModel = moviesModel;
-    this._filmList = this._moviesModel.filmListDefault;
+    this._filmList = this._moviesModel.filmListDefault.filter((film) => film.isWatched);
     this._genres = this._getGenresData(this._filmList);
     this._chart = this.renderChart();
 
@@ -186,22 +186,23 @@ export default class Statistic extends Component {
 
         switch (evt.target.getAttribute(`for`)) {
           case `statistic-all-time`:
-            this.updateComponent(this._moviesModel.filmListDefault);
+            data = this._moviesModel.filmListDefault.filter((film) => film.isWatched);
+            this.updateComponent(data);
             break;
           case `statistic-today`:
-            data = this._moviesModel.filmListDefault.filter((film) => moment(film.watchingDate).isSame(moment(), `day`));
+            data = this._moviesModel.filmListDefault.filter((film) => film.isWatched && moment(film.watchingDate).isSame(moment(), `day`));
             this.updateComponent(data);
             break;
           case `statistic-week`:
-            data = this._moviesModel.filmListDefault.filter((film) => moment(film.watchingDate) >= moment().subtract(7, `days`));
+            data = this._moviesModel.filmListDefault.filter((film) => film.isWatched && moment(film.watchingDate) >= moment().subtract(7, `days`));
             this.updateComponent(data);
             break;
           case `statistic-month`:
-            data = this._moviesModel.filmListDefault.filter((film) => moment(film.watchingDate) >= moment().subtract(1, `months`));
+            data = this._moviesModel.filmListDefault.filter((film) => film.isWatched && moment(film.watchingDate) >= moment().subtract(1, `months`));
             this.updateComponent(data);
             break;
           case `statistic-year`:
-            data = this._moviesModel.filmListDefault.filter((film) => moment(film.watchingDate) >= moment().subtract(1, `years`));
+            data = this._moviesModel.filmListDefault.filter((film) => film.isWatched && moment(film.watchingDate) >= moment().subtract(1, `years`));
             this.updateComponent(data);
             break;
         }

@@ -133,6 +133,7 @@ export default class FilmController {
       evt.target.setAttribute(`disabled`, `disabled`);
       const changedData = {
         isWatched: !this._film.isWatched,
+        watchingDate: new Date(),
         personalRating: 0
       };
 
@@ -164,6 +165,7 @@ export default class FilmController {
       evt.preventDefault();
       const changedData = {
         isWatched: !this._film.isWatched,
+        watchingDate: new Date(),
         personalRating: 0
       };
 

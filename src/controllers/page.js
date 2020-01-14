@@ -40,6 +40,7 @@ export default class PageController {
 
   showStatPage() {
     this._statisticComponent.show();
+    this._statisticComponent.updateComponent(this._moviesModel.filmListDefault.filter((film) => film.isWatched));
     this._sortComponent.hide();
     this._filmSectionComponent.hide();
   }
