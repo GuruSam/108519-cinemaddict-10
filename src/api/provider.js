@@ -42,7 +42,7 @@ export default class Provider {
       return this._api.updateMovie(id, newData);
     }
     this._isSync = false;
-    return null;
+    return Promise.reject(``);
   }
 
   createComment(id, data) {
@@ -56,7 +56,7 @@ export default class Provider {
     if (this._isOnline()) {
       return this._api.deleteComment(commentId);
     }
-    return null;
+    return Promise.reject(``);
   }
 
   sync() {
