@@ -11,14 +11,6 @@ const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
 export default class Api {
-  checkStatus(response) {
-    if (response.status >= 200 && response.status < 300) {
-      return response;
-    } else {
-      throw new Error(`${response.status}: ${response.statusText}`);
-    }
-  }
-
   getMovies() {
     return this._load({url: `movies`})
       .then((response) => response.json())
@@ -64,11 +56,19 @@ export default class Api {
     }).then((response) => response.json());
   }
 
+  _checkStatus(response) {
+    if (response.status >= 200 && response.status < 300) {
+      return response;
+    } else {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
+  }
+
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, AUTHORIZATION);
 
     return fetch(`${END_POINT}/${url}`, {method, body, headers})
-      .then(this.checkStatus)
+      .then(this._checkStatus)
       .catch((err) => {
         throw err;
       });

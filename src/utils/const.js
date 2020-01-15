@@ -18,7 +18,8 @@ export const Colors = {
 };
 
 export const Styles = {
-  PENDING_OPACITY: `0.5`
+  PENDING_OPACITY: `0.5`,
+  EMOJI_SIZE: `55px`
 };
 
 export const userRanks = [

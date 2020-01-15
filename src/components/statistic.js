@@ -15,22 +15,65 @@ export default class Statistic extends Component {
     this._subscribeOnEvents();
   }
 
-  _getGenresData(filmList) {
-    const genres = [];
-    const genresData = new Map();
+  getTemplate() {
+    return `<section class="statistic">
+    <p class="statistic__rank">
+      Your rank
+      <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+      <span class="statistic__rank-label">${getUserRank(this._moviesModel.filmListDefault.filter((film) => film.isWatched).length)}</span>
+    </p>
 
-    filmList.map((film) => film.genres.forEach((it) => genres.push(it)));
+    <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
+      <p class="statistic__filters-description">Show stats:</p>
 
-    genres.forEach((it) => {
-      if (genresData.has(it)) {
-        const value = genresData.get(it);
-        genresData.set(it, value + 1);
-      } else {
-        genresData.set(it, 1);
-      }
-    });
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
+      <label for="statistic-all-time" class="statistic__filters-label">All time</label>
 
-    return genresData;
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
+      <label for="statistic-today" class="statistic__filters-label">Today</label>
+
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
+      <label for="statistic-week" class="statistic__filters-label">Week</label>
+
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
+      <label for="statistic-month" class="statistic__filters-label">Month</label>
+
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
+      <label for="statistic-year" class="statistic__filters-label">Year</label>
+    </form>
+
+    ${this.getStatisticTextTemplate()}
+
+    ${this.getStatisticChartTemplate()}
+
+  </section>`;
+  }
+
+  getStatisticTextTemplate() {
+    const totalDuration = this._filmList.map((film) => film.duration)
+      .reduce((acc, cur) => acc + cur, 0);
+    const sortedGenresData = new Map([...this._genres].sort((a, b) => b[1] - a[1]));
+
+    return `<ul class="statistic__text-list">
+      <li class="statistic__text-item">
+        <h4 class="statistic__item-title">You watched</h4>
+        <p class="statistic__item-text">${this._filmList.length} <span class="statistic__item-description">movies</span></p>
+      </li>
+      <li class="statistic__text-item">
+        <h4 class="statistic__item-title">Total duration</h4>
+        <p class="statistic__item-text">${totalDuration ? formatTime(totalDuration, true) : `0`}</p>
+      </li>
+      <li class="statistic__text-item">
+        <h4 class="statistic__item-title">Top genre</h4>
+        <p class="statistic__item-text">${sortedGenresData ? sortedGenresData.keys().next().value : `-`}</p>
+      </li>
+    </ul>`;
+  }
+
+  getStatisticChartTemplate() {
+    return `<div class="statistic__chart-wrap">
+      <canvas class="statistic__chart" width="1000"></canvas>
+    </div>`;
   }
 
   updateComponent(data) {
@@ -113,70 +156,27 @@ export default class Statistic extends Component {
     }
   }
 
-  getTemplate() {
-    return `<section class="statistic">
-    <p class="statistic__rank">
-      Your rank
-      <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">${getUserRank(this._moviesModel.filmListDefault.filter((film) => film.isWatched).length)}</span>
-    </p>
-
-    <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
-      <p class="statistic__filters-description">Show stats:</p>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-      <label for="statistic-all-time" class="statistic__filters-label">All time</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
-      <label for="statistic-today" class="statistic__filters-label">Today</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
-      <label for="statistic-week" class="statistic__filters-label">Week</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
-      <label for="statistic-month" class="statistic__filters-label">Month</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
-      <label for="statistic-year" class="statistic__filters-label">Year</label>
-    </form>
-
-    ${this.getStatisticTextTemplate()}
-
-    ${this.getStatisticChartTemplate()}
-
-  </section>`;
-  }
-
-  getStatisticTextTemplate() {
-    const totalDuration = this._filmList.map((film) => film.duration)
-      .reduce((acc, cur) => acc + cur, 0);
-    const sortedGenresData = new Map([...this._genres].sort((a, b) => b[1] - a[1]));
-
-    return `<ul class="statistic__text-list">
-      <li class="statistic__text-item">
-        <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${this._filmList.length} <span class="statistic__item-description">movies</span></p>
-      </li>
-      <li class="statistic__text-item">
-        <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${totalDuration ? formatTime(totalDuration, true) : `0`}</p>
-      </li>
-      <li class="statistic__text-item">
-        <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">${sortedGenresData ? sortedGenresData.keys().next().value : `-`}</p>
-      </li>
-    </ul>`;
-  }
-
-  getStatisticChartTemplate() {
-    return `<div class="statistic__chart-wrap">
-      <canvas class="statistic__chart" width="1000"></canvas>
-    </div>`;
-  }
-
   rerender() {
     this.getElement().querySelector(`.statistic__text-list`).outerHTML = this.getStatisticTextTemplate();
     this.getElement().querySelector(`.statistic__chart-wrap`).outerHTML = this.getStatisticChartTemplate();
+  }
+
+  _getGenresData(filmList) {
+    const genres = [];
+    const genresData = new Map();
+
+    filmList.map((film) => film.genres.forEach((it) => genres.push(it)));
+
+    genres.forEach((it) => {
+      if (genresData.has(it)) {
+        const value = genresData.get(it);
+        genresData.set(it, value + 1);
+      } else {
+        genresData.set(it, 1);
+      }
+    });
+
+    return genresData;
   }
 
   _subscribeOnEvents() {

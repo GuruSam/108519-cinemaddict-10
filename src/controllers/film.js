@@ -20,6 +20,14 @@ export default class FilmController {
     this._api = provider;
   }
 
+  get id() {
+    return this._id;
+  }
+
+  get comments() {
+    return this._film.comments;
+  }
+
   render(film) {
     this._film = film;
     this._filmCard = new FilmCardComponent(film);
@@ -29,10 +37,6 @@ export default class FilmController {
     this.initFilmDetailsListeners();
 
     render(this._container.querySelector(`.films-list__container`), this._filmCard);
-  }
-
-  get id() {
-    return this._id;
   }
 
   destroy() {
@@ -47,10 +51,6 @@ export default class FilmController {
 
     this._filmCard.rerender();
     this._filmDetails.rerender();
-  }
-
-  getComments() {
-    return this._film.comments;
   }
 
   toggleFormState(formSelector, formElements) {

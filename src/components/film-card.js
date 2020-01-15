@@ -7,14 +7,8 @@ export default class FilmCard extends SmartComponent {
     this._film = film;
   }
 
-  getCardControlsTemplate() {
-    const film = this._film;
-
-    return `<form class="film-card__controls">
-      <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${film.isInWatchlist ? `film-card__controls-item--active` : ``}">Add to watchlist</button>
-      <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${film.isWatched ? `film-card__controls-item--active` : ``}">Mark as watched</button>
-      <button class="film-card__controls-item button film-card__controls-item--favorite ${film.isFavorite ? `film-card__controls-item--active` : ``}">Mark as favorite</button>
-    </form>`;
+  set film(newFilm) {
+    this._film = newFilm;
   }
 
   getTemplate() {
@@ -35,6 +29,16 @@ export default class FilmCard extends SmartComponent {
   </article>`;
   }
 
+  getCardControlsTemplate() {
+    const film = this._film;
+
+    return `<form class="film-card__controls">
+      <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${film.isInWatchlist ? `film-card__controls-item--active` : ``}">Add to watchlist</button>
+      <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${film.isWatched ? `film-card__controls-item--active` : ``}">Mark as watched</button>
+      <button class="film-card__controls-item button film-card__controls-item--favorite ${film.isFavorite ? `film-card__controls-item--active` : ``}">Mark as favorite</button>
+    </form>`;
+  }
+
   // Частичный перерендер элементов компонента, обладающего анимацией,
   // чтобы не вызывать при вызове rerender() эту анимацию
   rerender() {
@@ -44,8 +48,17 @@ export default class FilmCard extends SmartComponent {
     this.recoverListeners();
   }
 
-  set film(newFilm) {
-    this._film = newFilm;
+  recoverListeners() {
+    this._subscribeOnEvents();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.addEventListener(`click`, this._onFilmClick);
+    element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchlistClick);
+    element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onMarkAsWatchedClick);
+    element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onFavoriteClick);
   }
 
   onFilmClick(handler) {
@@ -66,18 +79,5 @@ export default class FilmCard extends SmartComponent {
   onFavoriteClick(handler) {
     this._onFavoriteClick = handler;
     this.getElement().querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, handler);
-  }
-
-  recoverListeners() {
-    this._subscribeOnEvents();
-  }
-
-  _subscribeOnEvents() {
-    const element = this.getElement();
-
-    element.addEventListener(`click`, this._onFilmClick);
-    element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchlistClick);
-    element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onMarkAsWatchedClick);
-    element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onFavoriteClick);
   }
 }

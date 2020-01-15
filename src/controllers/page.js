@@ -200,7 +200,7 @@ export default class PageController {
       return this._api.updateMovie(newData.id, newData)
         .then((response) => Movie.parseMovie(response))
         .then((data) => {
-          data.comments = filmController.getComments();
+          data.comments = filmController.comments;
 
           this._onRequestSuccess(data, controllers);
           if (this._moviesModel.filterType !== FilterTypes.DEFAULT) {

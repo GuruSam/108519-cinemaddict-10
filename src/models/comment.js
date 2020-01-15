@@ -3,9 +3,6 @@ export default class Comment {
     this.comment = comment;
     this.date = new Date().toISOString();
     this.emotion = emotion;
-
-    if (id) {
-      this.id = id;
-    }
+    this.id = id ? id : null;
   }
 }

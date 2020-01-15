@@ -16,16 +16,16 @@ export default class Movies {
     return this._filmList;
   }
 
-  set filmList(filmList) {
-    this._filmList = Array.from(filmList);
-  }
-
   get sortType() {
     return this._activeSortType;
   }
 
   get filterType() {
     return this._activeFilterType;
+  }
+
+  set filmList(filmList) {
+    this._filmList = Array.from(filmList);
   }
 
   set sortType(type) {
@@ -46,6 +46,15 @@ export default class Movies {
     return filmList;
   }
 
+  setComments(movieId, comments) {
+    this._filmList.find((film) => film.id === movieId).comments = comments;
+  }
+
+  setFilter(filterType) {
+    this._activeFilterType = filterType;
+    this._filterChangeHandlers.forEach((handler) => handler());
+  }
+
   updateFilm(id, film) {
     const index = this._filmList.findIndex((it) => it.id === id);
 
@@ -60,15 +69,6 @@ export default class Movies {
     }
 
     return false;
-  }
-
-  setComments(movieId, comments) {
-    this._filmList.find((film) => film.id === movieId).comments = comments;
-  }
-
-  setFilter(filterType) {
-    this._activeFilterType = filterType;
-    this._filterChangeHandlers.forEach((handler) => handler());
   }
 
   onFilterChange(handler) {
