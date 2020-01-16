@@ -211,12 +211,15 @@ export default class FilmDetails extends SmartComponent {
   }
 
   _getCommentsWrapTemplate() {
-    const loadingRing = new LoadingRingComponent();
-    loadingRing.width = `100px`;
-    loadingRing.height = `100px`;
+    if (!this._film.comments.length) {
+      const loadingRing = new LoadingRingComponent();
+      loadingRing.width = `100px`;
+      loadingRing.height = `100px`;
 
-    return !this._film.comments.length ? loadingRing.getElement().outerHTML :
-      `<h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._film.comments.length}</span></h3>
+      return loadingRing.getElement().outerHTML;
+    }
+
+    return `<h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._film.comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
           ${this.renderComments()}
