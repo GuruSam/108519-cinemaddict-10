@@ -29,7 +29,7 @@ export const userRanks = [
     max: 9
   },
   {
-    title: `Fun`,
+    title: `Fan`,
     min: 10,
     max: 19
   },
