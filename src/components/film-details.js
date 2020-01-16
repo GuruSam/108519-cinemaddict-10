@@ -49,35 +49,35 @@ export default class FilmDetails extends SmartComponent {
             </div>
 
             <table class="film-details__table">
-              <tr class="film-details__row">
+               ${this._film.director ? `<tr class="film-details__row">
                 <td class="film-details__term">Director</td>
                 <td class="film-details__cell">${this._film.director}</td>
-              </tr>
-              <tr class="film-details__row">
+                </tr>` : ``}
+               ${this._film.writers.length ? `<tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
                 <td class="film-details__cell">${this._film.writers}</td>
-              </tr>
-              <tr class="film-details__row">
+              </tr>` : ``}
+               ${this._film.actors.length ? `<tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
                 <td class="film-details__cell">${this._film.actors}</td>
-              </tr>
-              <tr class="film-details__row">
+              </tr>` : ``}
+               ${this._film.date ? `<tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
                 <td class="film-details__cell">${getReleaseDate(this._film.date)}</td>
-              </tr>
-              <tr class="film-details__row">
+              </tr>` : ``}
+               ${this._film.duration ? `<tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
                 <td class="film-details__cell">${formatTime(this._film.duration)}</td>
-              </tr>
-              <tr class="film-details__row">
+              </tr>` : ``}
+               ${this._film.country ? `<tr class="film-details__row">
                 <td class="film-details__term">Country</td>
                 <td class="film-details__cell">${this._film.country}</td>
-              </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
+              </tr>` : ``}
+               ${this._film.genres.length ? `<tr class="film-details__row">
+                <td class="film-details__term">${this._film.genres.length > 1 ? `Genres` : `Genre`}</td>
                 <td class="film-details__cell">
                   ${genresMarkup}
-              </tr>
+              </tr>` : ``}
             </table>
 
             <p class="film-details__film-description">
