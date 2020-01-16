@@ -116,11 +116,13 @@ export default class FilmDetails extends SmartComponent {
     }
 
     render(container, this);
+    this._subscribeOnEvents();
     document.addEventListener(`keydown`, this._onKeydown);
   }
 
   hide() {
     remove(this);
+    this.removeElement();
     document.removeEventListener(`keydown`, this._onKeydown);
   }
 
