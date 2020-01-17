@@ -3,7 +3,8 @@ import SmartComponent from "./smart-component";
 import {remove, render} from "../utils/render";
 import LoadingRingComponent from "./loading-ring";
 import moment from "moment";
-import {Styles} from "../utils/const";
+import {Films, Styles} from "../utils/const";
+import {debounce} from "../utils/debounce";
 
 export default class FilmDetails extends SmartComponent {
   constructor(film) {
@@ -33,7 +34,7 @@ export default class FilmDetails extends SmartComponent {
           <div class="film-details__poster">
             <img class="film-details__poster-img" src="./${this._film.poster}" alt="">
 
-            ${this._film.ageRating >= 18 ? `<p class="film-details__age">18+</p>` : ``}
+            ${this._film.ageRating >= Films.AGE_RATING ? `<p class="film-details__age">18+</p>` : ``}
           </div>
 
           <div class="film-details__info">
@@ -298,18 +299,27 @@ export default class FilmDetails extends SmartComponent {
   }
 
   onAddToWatchlistClick(handler) {
-    this._onAddToWatchlistClick = handler;
-    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, handler);
+    this._onAddToWatchlistClick = (evt) => {
+      evt.preventDefault();
+      debounce(handler, evt);
+    };
+    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._onAddToWatchlistClick);
   }
 
   onMarkAsWatchedClick(handler) {
-    this._onMarkAsWatchedClick = handler;
-    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, handler);
+    this._onMarkAsWatchedClick = (evt) => {
+      evt.preventDefault();
+      debounce(handler, evt);
+    };
+    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._onMarkAsWatchedClick);
   }
 
   onFavoriteClick(handler) {
-    this._onFavoriteClick = handler;
-    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, handler);
+    this._onFavoriteClick = (evt) => {
+      evt.preventDefault();
+      debounce(handler, evt);
+    };
+    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._onFavoriteClick);
   }
 
   onCommentDeleteClick(handler) {

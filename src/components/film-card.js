@@ -1,5 +1,7 @@
 import {formatTime, getYear} from "../utils/helpers";
 import SmartComponent from "./smart-component";
+import {debounce} from "../utils/debounce";
+import {Films} from "../utils/const";
 
 export default class FilmCard extends SmartComponent {
   constructor(film) {
@@ -12,7 +14,7 @@ export default class FilmCard extends SmartComponent {
   }
 
   getTemplate() {
-    const description = this._film.description.length > 139 ? this._film.description.substring(0, 139) + `...` : this._film.description;
+    const description = this._film.description.length > Films.COMMENT_LENGTH ? this._film.description.substring(0, Films.COMMENT_LENGTH) + `...` : this._film.description;
 
     return `<article class="film-card">
     <h3 class="film-card__title">${this._film.title}</h3>
@@ -67,17 +69,26 @@ export default class FilmCard extends SmartComponent {
   }
 
   onAddToWatchlistClick(handler) {
-    this._onAddToWatchlistClick = handler;
-    this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, handler);
+    this._onAddToWatchlistClick = (evt) => {
+      evt.preventDefault();
+      debounce(handler, evt);
+    };
+    this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._onAddToWatchlistClick);
   }
 
   onMarkAsWatchedClick(handler) {
-    this._onMarkAsWatchedClick = handler;
-    this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, handler);
+    this._onMarkAsWatchedClick = (evt) => {
+      evt.preventDefault();
+      debounce(handler, evt);
+    };
+    this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._onMarkAsWatchedClick);
   }
 
   onFavoriteClick(handler) {
-    this._onFavoriteClick = handler;
-    this.getElement().querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, handler);
+    this._onFavoriteClick = (evt) => {
+      evt.preventDefault();
+      debounce(handler, evt);
+    };
+    this.getElement().querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._onFavoriteClick);
   }
 }

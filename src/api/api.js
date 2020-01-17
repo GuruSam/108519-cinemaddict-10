@@ -7,6 +7,11 @@ const Method = {
   DELETE: `DELETE`
 };
 
+const StatusCode = {
+  OK: 200,
+  MULTIPLE: 300
+};
+
 const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
@@ -57,7 +62,7 @@ export default class Api {
   }
 
   _checkStatus(response) {
-    if (response.status >= 200 && response.status < 300) {
+    if (response.status >= StatusCode.OK && response.status < StatusCode.MULTIPLE) {
       return response;
     } else {
       throw new Error(`${response.status}: ${response.statusText}`);

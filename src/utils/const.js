@@ -2,7 +2,9 @@ export const Films = {
   TOTAL_AMOUNT: 10,
   INITIAL_AMOUNT: 5,
   LOAD_AMOUNT: 5,
-  EXTRA_FILM_AMOUNT: 2
+  EXTRA_FILM_AMOUNT: 2,
+  COMMENT_LENGTH: 139,
+  AGE_RATING: 18
 };
 
 export const FilterTypes = {
