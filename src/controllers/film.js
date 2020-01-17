@@ -4,8 +4,7 @@ import {isEscPressed, isSubmitPressed} from "../utils/helpers";
 import {remove, render} from "../utils/render";
 import Comment from "../models/comment";
 import Movie from "../models/movie";
-import {Colors, Styles, DEBOUNCE_TIME} from "../utils/const";
-import debounce from "lodash.debounce";
+import {Colors, Styles} from "../utils/const";
 
 
 export default class FilmController {
